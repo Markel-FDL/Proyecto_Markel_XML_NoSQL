@@ -1,9 +1,12 @@
 package org.example;
 
+import org.xmldb.api.base.XMLDBException;
+
 import java.io.*;
 
 public class Creacion_fichero_Musico {
-public void creacion_fichero_musico() throws IOException, ClassNotFoundException {
+    Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
+public void creacion_fichero_musico() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         // ObjectOutputStream para poder escribir en el fichero binario de compositores "Compositores.dat". Si no existe, se crea automaticamente.
         ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Compositores.dat"));
         // Array con los nombres de los compositores
@@ -34,5 +37,7 @@ public void creacion_fichero_musico() throws IOException, ClassNotFoundException
         } catch (ClassNotFoundException e) {
             System.out.println("Ha habido algun error con la clase");
         }
+
+        funciones.Musicos_XML();
     }
 }

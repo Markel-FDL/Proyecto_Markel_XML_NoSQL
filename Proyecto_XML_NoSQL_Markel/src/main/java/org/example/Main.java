@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.*;
+import org.xmldb.api.base.XMLDBException;
 
 import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.io.BufferedReader;
@@ -14,7 +15,7 @@ public class Main {
 
     static Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         System.out.println("Base de datos sobre peliculas");
         System.out.println("Inicializando aplicación");
         System.out.print("Queres cargar los datos por defecto? (En caso de hacerlo, perderas los datos que hayas añadido)(s para aceptar; otra tecla para rechazar ): ");
@@ -32,16 +33,16 @@ public class Main {
             funciones.Crear_fichero_Pelicula();
             System.out.println("Carga realizada");
         } else {
-            funciones.Array_Peliculas();
+/*            funciones.Array_Peliculas();
             funciones.Array_Directores();
             funciones.Array_Fotografo();
             funciones.Array_Musico();
             funciones.Array_Actores();
-        }
+*/        }
         Menu_Principal();
     }
 
-    public static void Menu_Principal() throws IOException, ClassNotFoundException {
+    public static void Menu_Principal() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         int num = 0;
         try {
             System.out.println("\nMenu: ");
@@ -71,7 +72,7 @@ public class Main {
         }
     }
 
-    public static void Peliculas() throws IOException, ClassNotFoundException {
+    public static void Peliculas() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {
@@ -111,7 +112,7 @@ public class Main {
         }
     }
 
-    public static void Actores() throws IOException, ClassNotFoundException {
+    public static void Actores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {
@@ -140,7 +141,7 @@ public class Main {
         }
     }
 
-    public static void Directores() throws IOException, ClassNotFoundException {
+    public static void Directores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {
@@ -169,7 +170,7 @@ public class Main {
         }
     }
 
-    public static void Fotografos() throws IOException, ClassNotFoundException {
+    public static void Fotografos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {
@@ -198,7 +199,7 @@ public class Main {
         }
     }
 
-    public static void Musicos() throws IOException, ClassNotFoundException {
+    public static void Musicos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {

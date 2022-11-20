@@ -1,9 +1,12 @@
 package org.example;
 
+import org.xmldb.api.base.XMLDBException;
+
 import java.io.*;
 
 public class Creacion_fichero_Director {
-    public void creacion_fichero_director() throws IOException, ClassNotFoundException {
+    Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
+    public void creacion_fichero_director() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         // ObjectOutputStream para poder escribir en el fichero binario de directores "Directores.dat". Si no existe, se crea automaticamente.
         ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Directores.dat"));
         // Array con los nombres de los directores
@@ -34,5 +37,7 @@ public class Creacion_fichero_Director {
         } catch (ClassNotFoundException e) {
             System.out.println("Ha habido algun error con la clase");
         }
+
+        funciones.Directores_XML();
     }
 }

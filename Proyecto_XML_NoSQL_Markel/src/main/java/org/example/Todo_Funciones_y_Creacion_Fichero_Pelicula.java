@@ -1,11 +1,15 @@
 package org.example;
 
-import com.groupdocs.viewer.Viewer;
-import com.groupdocs.viewer.options.PngViewOptions;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import org.xmldb.api.DatabaseManager;
+import org.xmldb.api.base.*;
+import org.xmldb.api.base.Collection;
+import org.xmldb.api.modules.*;
+//import org.xmldb.api.*;
+
 
 import javax.mail.*;
 import javax.mail.PasswordAuthentication;
@@ -31,7 +35,43 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     static List<Actor> actores = new ArrayList<Actor>();
     static List<Pelicula> peliculas = new ArrayList<Pelicula>();
 
-    public void Crear_fichero_Pelicula() throws IOException, ClassNotFoundException {
+
+    public void crear_coleccion_exist_db() {
+
+    }
+
+    public void conectar_exist_db(String ss) throws XMLDBException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Class cl = Class.forName(driver); //Cargar del driver
+        Database database = (Database) cl.newInstance(); //Instancia de la BD
+        DatabaseManager.registerDatabase(database); //Registro del driver
+        col = DatabaseManager.getCollection(URI, usu, usuPwd);
+
+        if(col == null) {
+            System.out.println(" *** LA COLECCION NO EXISTE. ***");
+        }
+
+        File archivo = new File(ss+".xml");
+        if (!archivo.canRead())
+            System.out.println("ERROR AL LEER EL FICHERO");
+        else
+        {
+            assert col != null;
+            Resource nuevoRecurso = col.createResource(archivo.getName(),
+                "XMLResource");
+            nuevoRecurso.setContent(archivo); //Asignamos el archivo
+            col.storeResource(nuevoRecurso); //Lo almacenamos en la colección
+        }
+
+    }
+
+
+    public void Crear_fichero_Pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
         // Recoger en un array a los directores
 
@@ -165,9 +205,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
         mostrar.close();
 
+        Peliculas_XML();
+
     }
 
-    public void Array_Peliculas() throws IOException, ClassNotFoundException {
+ /*   public void Array_Peliculas() throws IOException, ClassNotFoundException {
         // ObjectInputStream para insertar los actores en el array peliculas
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
         Pelicula pelicula = (Pelicula) mostrar.readObject();
@@ -186,77 +228,24 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
         mostrar.close();
     }
-
+*/
     // DIRECTORES
     // Mostrar todos los directores
 
-    public void Mostrar_Directores(String s) throws IOException, ClassNotFoundException {
-        // ObjectInputStream para mostrar por pantalla los directores
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Directores.dat"));
-        Director director = (Director) mostrar.readObject();
-        // Mostramos por pantalla todos los directores
-        try {
-            while (director != null) {
-                director.Mostrar();
-                director = (Director) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algun error con la clase");
-        }
-        if (s == null) {
+    public void Mostrar_Directores(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+
             Main.Directores();
-        }
+
     }
 
     // Mostrar director por nombre
 
-    public void Mostrar_Director_por_Nombre() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar al director por su nombre");
+    public void Mostrar_Director_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Directores("1");
-
-        try {
-            System.out.println("Nombre del director: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla los directores
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Directores.dat"));
-        Director director = (Director) mostrar.readObject();
-        // Mostramos por pantalla todos los directores
-        try {
-            while (director != null) {
-                if (Objects.equals(director.getNombre(), nombre)) {
-                    director.Mostrar();
-                    es++;
-                    director = (Director) mostrar.readObject();
-                } else {
-                    director = (Director) mostrar.readObject();
-                }
-            }
-            mostrar.close();
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algun error con la clase");
-        }
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ningun director con ese nombre");
-        } else {
-            es = 0;
-        }
         Main.Directores();
     }
 
-    public void Array_Directores() throws IOException, ClassNotFoundException {
+/*    public void Array_Directores() throws IOException, ClassNotFoundException {
         // ObjectInputStream para insertar los actores en el array peliculas
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Directores.dat"));
         Director director = (Director) mostrar.readObject();
@@ -275,116 +264,19 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
         mostrar.close();
     }
-
+*/
 
     // Insertar directores
 
-    public void Insertar_Directores() throws IOException, ClassNotFoundException {
-        String nombre = "";
-        String edad;
+    public void Insertar_Directores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Insertar director");
-        try {
-            System.out.print("Nombre del director: ");
-            nombre = scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("Dato introducido erroneo");
-        }
-        try {
-            System.out.println("Edad del director (En caso de estar vivo, introduzca su edad. En caso contrario, año de nacimiento y muerte separadas de un guion): ");
-            edad = scanner.nextLine();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Directores.dat"));
-        Director director = (Director) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (director != null) {
-                ultimo_id = director.getId_director();
-                director = (Director) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algun error con la clase");
-        }
-        mostrar.close();
-
-        Director dir = new Director(ultimo_id+1, nombre, edad);
-        directores.add(dir);
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Directores.dat"));
-        int i_d = 0;
-        for (Director d : directores) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
         Main.Directores();
     }
 
     // Borrar directores
 
-    public void Eliminar_Directores() throws IOException, ClassNotFoundException {
-        int id = -1;
+    public void Eliminar_Directores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Insertar director");
-
-        Mostrar_Directores("1");
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Directores.dat"));
-        Director actor = (Director) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (actor != null) {
-                ultimo_id = actor.getId_director();
-                actor = (Director) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar.close();
-
-        do {
-            try {
-                System.out.print("ID del director a eliminar: ");
-                id = scanner.nextInt();
-                if (id <= 0 || id > ultimo_id){
-                    System.out.println("Dato introducido erroneo");
-                }
-            } catch (Exception e) {
-                System.out.println("Dato introducido erroneo");
-            }
-        } while (id <= 0 || id > ultimo_id);
-
-        boolean s = false;
-        for (Director d: directores){
-            if (d.getId_director() == id){
-                directores.remove(d);
-                s = true;
-                break;
-            }
-        }
-
-        if (s){
-            System.out.println("borrado completado");
-        } else {
-            System.out.println("Error en el borrado");
-        }
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Directores.dat"));
-        int i_d = 0;
-        for (Director d : directores) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
         Main.Directores();
 
 
@@ -393,72 +285,19 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // FOTÓGRAFOS
     // Mostrar todos los fotógrafos
 
-    public void Mostrar_Fotografos(String s) throws IOException, ClassNotFoundException {
-        // ObjectInputStream para mostrar por pantalla los fotografos
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Fotografos.dat"));
-        Fotografo fotografo = (Fotografo) mostrar.readObject();
-        // Mostramos por pantalla todos los fotografos
-        try {
-            while (fotografo != null) {
-                fotografo.Mostrar();
-                fotografo = (Fotografo) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algun error con la clase");
-        }
-        if (s == null) {
+    public void Mostrar_Fotografos(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+
             Main.Fotografos();
-        }
     }
 
     // Mostrar fotógrafo por nombre
 
-    public void Mostrar_Fotografo_por_Nombre() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar al fotógrafo por su nombre");
+    public void Mostrar_Fotografo_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Fotografos("1");
-
-        try {
-            System.out.println("Nombre del fotógrafo: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla los fotógrafos
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Fotografos.dat"));
-        Fotografo fotografo = (Fotografo) mostrar.readObject();
-        // Mostramos por pantalla todos los directores
-        try {
-            while (fotografo != null) {
-                if (Objects.equals(fotografo.getNombre(), nombre)) {
-                    fotografo.Mostrar();
-                    es++;
-                    fotografo = (Fotografo) mostrar.readObject();
-                } else {
-                    fotografo = (Fotografo) mostrar.readObject();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ningún fotógrafo con ese nombre");
-        } else {
-            es = 0;
-        }
         Main.Fotografos();
     }
 
-    public void Array_Fotografo() throws IOException, ClassNotFoundException {
+  /*  public void Array_Fotografo() throws IOException, ClassNotFoundException {
         // ObjectInputStream para insertar los actores en el array peliculas
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Fotografos.dat"));
         Fotografo fotografo = (Fotografo) mostrar.readObject();
@@ -477,189 +316,36 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
         mostrar.close();
     }
-
+*/
 
     // Insertar fotógrafos
 
-    public void Insertar_Fotografo() throws IOException, ClassNotFoundException {
-        String nombre = "";
-        String edad;
+    public void Insertar_Fotografo() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Insertar fotógrafo");
-        try {
-            System.out.print("Nombre del fotógrafo: ");
-            nombre = scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("Dato introducido erróneo");
-        }
-        try {
-            System.out.println("Edad del fotógrafo (En caso de estar vivo, introduzca su edad. En caso contrario, año de nacimiento y muerte separadas de un guion): ");
-            edad = scanner.nextLine();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Fotografos.dat"));
-        Fotografo fotografo = (Fotografo) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (fotografo != null) {
-                ultimo_id = fotografo.id_fotografo;
-                fotografo = (Fotografo) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar.close();
-
-        Fotografo fot = new Fotografo(ultimo_id+1, nombre, edad);
-        fotografos.add(fot);
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Fotografos.dat"));
-        int i_d = 0;
-        for (Fotografo d : fotografos) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
         Main.Fotografos();
     }
 
-    public void Eliminar_Fotografo() throws IOException, ClassNotFoundException {
-        int id = -1;
+    public void Eliminar_Fotografo() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Eliminar fotografo");
-
-        Mostrar_Fotografos("1");
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Fotografos.dat"));
-        Fotografo actor = (Fotografo) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (actor != null) {
-                ultimo_id = actor.getId_fotografo();
-                actor = (Fotografo) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar.close();
-
-        do {
-            try {
-                System.out.print("ID del fotografo a eliminar: ");
-                id = scanner.nextInt();
-                if (id <= 0 || id > ultimo_id){
-                    System.out.println("Dato introducido erroneo");
-                }
-            } catch (Exception e) {
-                System.out.println("Dato introducido erroneo");
-            }
-        } while (id <= 0 || id > ultimo_id);
-
-        boolean s = false;
-        for (Fotografo d: fotografos){
-            if (d.getId_fotografo() == id){
-                fotografos.remove(d);
-                s = true;
-                break;
-            }
-        }
-
-        if (s){
-            System.out.println("borrado completado");
-        } else {
-            System.out.println("Error en el borrado");
-        }
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Fotografos.dat"));
-        int i_d = 0;
-        for (Fotografo d : fotografos) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
         Main.Fotografos();
-
-
     }
 
     // MÚSICOS
     // Mostrar todos los compositores
 
-    public void Mostrar_Musicos(String s) throws IOException, ClassNotFoundException {
-        // ObjectInputStream para mostrar por pantalla los compositores
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Compositores.dat"));
-        Musico musico = (Musico) mostrar.readObject();
-        // Mostramos por pantalla todos los compositores
-        try {
-            while (musico != null) {
-                musico.Mostrar();
-                musico = (Musico) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algun error con la clase");
-        }
-        if (s == null){
-            mostrar.close();
+    public void Mostrar_Musicos(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+
             Main.Musicos();
-        }
     }
 
     // Mostrar músico por nombre
 
-    public void Mostrar_Musico_por_Nombre() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar al compositor por su nombre");
+    public void Mostrar_Musico_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Musicos("1");
-
-        try {
-            System.out.println("Nombre del compositor: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla los compositores
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Compositores.dat"));
-        Musico musico = (Musico) mostrar.readObject();
-        // Mostramos por pantalla todos los compositores
-        try {
-            while (musico != null) {
-                if (Objects.equals(musico.getNombre(), nombre)) {
-                    musico.Mostrar();
-                    es++;
-                    musico = (Musico) mostrar.readObject();
-                } else {
-                    musico = (Musico) mostrar.readObject();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ningún compositores con ese nombre");
-        } else {
-            es = 0;
-        }
         Main.Musicos();
     }
 
-    public void Array_Musico() throws IOException, ClassNotFoundException {
+ /*   public void Array_Musico() throws IOException, ClassNotFoundException {
         // ObjectInputStream para insertar los actores en el array peliculas
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Compositores.dat"));
         Musico musico = (Musico) mostrar.readObject();
@@ -678,185 +364,35 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
         mostrar.close();
     }
-
+*/
     // Insertar músico
 
-    public void Insertar_Musico() throws IOException, ClassNotFoundException {
-        String nombre = "";
-        String edad;
+    public void Insertar_Musico() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Insertar compositor");
-        try {
-            System.out.print("Nombre del compositor: ");
-            nombre = scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("Dato introducido erróneo");
-        }
-        try {
-            System.out.println("Edad del compositor (En caso de estar vivo, introduzca su edad. En caso contrario, año de nacimiento y muerte separadas de un guion): ");
-            edad = scanner.nextLine();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Compositores.dat"));
-        Musico musico = (Musico) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (musico != null) {
-                ultimo_id = musico.id_musico;
-                musico = (Musico) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar.close();
-
-        Musico mus = new Musico(ultimo_id+1, nombre, edad);
-        musicos.add(mus);
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Compositores.dat"));
-        int i_d = 0;
-        for (Musico d : musicos) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
         Main.Musicos();
     }
 
-    public void Eliminar_Musicos() throws IOException, ClassNotFoundException {
-        int id = -1;
-
-        System.out.println("Eliminar Compositor");
-
-        Mostrar_Musicos("1");
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Compositores.dat"));
-        Musico actor = (Musico) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (actor != null) {
-                ultimo_id = actor.getId_musico();
-                actor = (Musico) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar.close();
-
-        do {
-            try {
-                System.out.print("ID del compositor a eliminar: ");
-                id = scanner.nextInt();
-                if (id <= 0 || id > ultimo_id){
-                    System.out.println("Dato introducido erroneo");
-                }
-            } catch (Exception e) {
-                System.out.println("Dato introducido erroneo");
-            }
-        } while (id <= 0 || id > ultimo_id);
-
-        boolean s = false;
-        for (Musico d: musicos){
-            if (d.getId_musico() == id){
-                musicos.remove(d);
-                s = true;
-                break;
-            }
-        }
-
-        if (s){
-            System.out.println("borrado completado");
-        } else {
-            System.out.println("Error en el borrado");
-        }
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Compositores.dat"));
-        int i_d = 0;
-        for (Musico d : musicos) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
+    public void Eliminar_Musicos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Main.Musicos();
-
 
     }
 
     // ACTORES
     // Mostrar todos los actores
 
-    public void Mostrar_Actores(String s) throws IOException, ClassNotFoundException {
-        // ObjectInputStream para mostrar por pantalla los actores
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Actores.dat"));
-        Actor actor = (Actor) mostrar.readObject();
-        // Mostramos por pantalla todos los actores
-        try {
-            while (actor != null) {
-                actor.Mostrar();
-                actor = (Actor) mostrar.readObject();
-            }
-        } catch (
-                IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algun error con la clase");
-        }
-        if (s == null) {
+    public void Mostrar_Actores(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+
             Main.Actores();
-        }
     }
 
     // Mostrar actor por nombre
 
-    public void Mostrar_Actor_por_Nombre() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar al actor por su nombre");
+    public void Mostrar_Actor_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Actores("1");
-
-        try {
-            System.out.println("Nombre del actor: ");
-            nombre = scanner.nextLine();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla los actores
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Actores.dat"));
-        Actor actor = (Actor) mostrar.readObject();
-        // Mostramos por pantalla todos los actores
-        try {
-            while (actor != null) {
-                if (Objects.equals(actor.getNombre(), nombre)) {
-                    actor.Mostrar();
-                    es++;
-                    actor = (Actor) mostrar.readObject();
-                } else {
-                    actor = (Actor) mostrar.readObject();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ningún actor con ese nombre");
-        } else {
-            es = 0;
-        }
         Main.Actores();
     }
 
-    public void Array_Actores() throws IOException, ClassNotFoundException {
+ /*   public void Array_Actores() throws IOException, ClassNotFoundException {
         // ObjectInputStream para insertar los actores en el array peliculas
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Actores.dat"));
         Actor actor = (Actor) mostrar.readObject();
@@ -875,786 +411,86 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
         mostrar.close();
     }
-
+*/
     // Insertar actor
 
-    public void Insertar_Actor() throws IOException, ClassNotFoundException {
-        String nombre = "";
-        String edad;
+    public void Insertar_Actor() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Insertar actor");
-        try {
-            System.out.print("Nombre del actor: ");
-            nombre = scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("Dato introducido erróneo");
-        }
-        try {
-            System.out.println("Edad del actor (En caso de estar vivo, introduzca su edad. En caso contrario, año de nacimiento y muerte separadas de un guion): ");
-            edad = scanner.nextLine();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Actores.dat"));
-        Actor actor = (Actor) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (actor != null) {
-                ultimo_id = actor.id_actor;
-                actor = (Actor) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar.close();
-
-        Actor act = new Actor(ultimo_id+1, nombre, edad);
-        actores.add(act);
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Actores.dat"));
-        int i_d = 0;
-        for (Actor d : actores) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
         Main.Actores();
     }
 
-    public void Eliminar_Actores() throws IOException, ClassNotFoundException {
-        int id = -1;
+    public void Eliminar_Actores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Eliminar actores");
-
-        Mostrar_Actores("1");
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Actores.dat"));
-        Actor actor = (Actor) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (actor != null) {
-                ultimo_id = actor.id_actor;
-                actor = (Actor) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar.close();
-
-        do {
-            try {
-                System.out.print("ID del actor a eliminar: ");
-                id = scanner.nextInt();
-                if (id <= 0 || id > ultimo_id){
-                    System.out.println("Dato introducido erroneo");
-                }
-            } catch (Exception e) {
-                System.out.println("Dato introducido erroneo");
-            }
-        } while (id <= 0 || id > ultimo_id);
-
-        boolean s = false;
-        for (Actor d: actores){
-            if (d.getId_actor() == id){
-                actores.remove(d);
-                s = true;
-                break;
-            }
-        }
-
-        if (s){
-            System.out.println("borrado completado");
-        } else {
-            System.out.println("Error en el borrado");
-        }
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Actores.dat"));
-        int i_d = 0;
-        for (Actor d : actores) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
         Main.Actores();
-
-
     }
 
     // PELÍCULAS
     // Mostrar todas las peliculas
 
-    public void Mostrar_Peliculas(String s) throws IOException, ClassNotFoundException {
-        // ObjectInputStream para mostrar por pantalla los actores
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula pelicula = (Pelicula) mostrar.readObject();
-        // Mostramos por pantalla todos los actores
-        try {
-            while (pelicula != null) {
-                pelicula.Mostrar();
-                pelicula = (Pelicula) mostrar.readObject();
-            }
-        } catch (
-                IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algun error con la clase");
-        }
+    public void Mostrar_Peliculas(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        mostrar.close();
-
-        if (s == null) {
             Main.Peliculas();
-        }
     }
 
     // Mostrar la pelicula con el nombre
 
-    public void Mostrar_Pelicula_por_Nombre() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar la película por su nombre");
+    public void Mostrar_Pelicula_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Peliculas("1");
-
-        try {
-            System.out.println("Nombre de la pelicula: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla las películas
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula pelicula = (Pelicula) mostrar.readObject();
-        // Mostramos por pantalla todas las peliculas
-        try {
-            while (pelicula != null) {
-                if (Objects.equals(pelicula.getNombre_pelicula(), nombre)) {
-                    pelicula.Mostrar();
-                    es++;
-                    pelicula = (Pelicula) mostrar.readObject();
-                } else {
-                    pelicula = (Pelicula) mostrar.readObject();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
         Main.Peliculas();
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ninguna película con ese nombre");
-        } else {
-            es = 0;
-        }
-
     }
 
     // Mostrar la pelicula con el nombre del director
 
-    public void Mostrar_Pelicula_por_Director() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar la película por su director");
+    public void Mostrar_Pelicula_por_Director() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Directores("1");
-
-        try {
-            System.out.println("Nombre del director de la película: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla las películas
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula pelicula = (Pelicula) mostrar.readObject();
-        // Mostramos por pantalla todas las peliculas
-        try {
-            while (pelicula != null) {
-                if (Objects.equals(pelicula.getDirector().getNombre(), nombre)) {
-                    pelicula.Mostrar();
-                    es++;
-                    pelicula = (Pelicula) mostrar.readObject();
-                } else {
-                    pelicula = (Pelicula) mostrar.readObject();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ninguna película con ese nombre");
-        } else {
-            es = 0;
-        }
         Main.Peliculas();
     }
 
     // Mostrar la pelicula con el nombre del músico
 
-    public void Mostrar_Pelicula_por_Musico() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar la película por su compositor");
+    public void Mostrar_Pelicula_por_Musico() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Musicos("1");
-
-        try {
-            System.out.println("Nombre del compositor de la película: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla las películas
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula pelicula = (Pelicula) mostrar.readObject();
-        // Mostramos por pantalla todas las peliculas
-        try {
-            while (pelicula != null) {
-                if (Objects.equals(pelicula.getMusico().getNombre(), nombre)) {
-                    pelicula.Mostrar();
-                    es++;
-                    pelicula = (Pelicula) mostrar.readObject();
-                } else {
-                    pelicula = (Pelicula) mostrar.readObject();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ninguna película con ese nombre");
-        } else {
-            es = 0;
-        }
         Main.Peliculas();
     }
 
     // Mostrar la película con el nombre del fotógrafo
 
-    public void Mostrar_Pelicula_por_Fotografo() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar la película por su fotógrafo");
+    public void Mostrar_Pelicula_por_Fotografo() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Fotografos("1");
-
-        try {
-            System.out.println("Nombre del fotógrafo de la película: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla las películas
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula pelicula = (Pelicula) mostrar.readObject();
-        // Mostramos por pantalla todas las peliculas
-        try {
-            while (pelicula != null) {
-                if (Objects.equals(pelicula.getFotografo().getNombre(), nombre)) {
-                    pelicula.Mostrar();
-                    es++;
-                    pelicula = (Pelicula) mostrar.readObject();
-                } else {
-                    pelicula = (Pelicula) mostrar.readObject();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ninguna película con ese nombre");
-        } else {
-            es = 0;
-        }
         Main.Peliculas();
     }
 
     // Mostrar la película con el nombre del actor
 
-    public void Mostrar_Pelicula_por_Actor() throws IOException, ClassNotFoundException {
-        String nombre;
-        int es = 0;
-        System.out.println("Mostrar la película por su actor");
+    public void Mostrar_Pelicula_por_Actor() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        Mostrar_Peliculas("1");
-
-        try {
-            System.out.println("Nombre del actor de la película: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // ObjectInputStream para mostrar por pantalla las películas
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula pelicula = (Pelicula) mostrar.readObject();
-        // Mostramos por pantalla todas las peliculas
-        try {
-            while (pelicula != null) {
-                if (Objects.equals(pelicula.getActor_prota().getNombre(), nombre)) {
-                    System.out.println("Actor protagonista");
-                    pelicula.Mostrar();
-                    es++;
-                    pelicula = (Pelicula) mostrar.readObject();
-                } else {
-                    pelicula = (Pelicula) mostrar.readObject();
-                }
-
-                if (Objects.equals(pelicula.getActor_secundario().getNombre(), nombre)) {
-                    System.out.println("Actor secundario");
-                    pelicula.Mostrar();
-                    es++;
-                    pelicula = (Pelicula) mostrar.readObject();
-                } else {
-                    pelicula = (Pelicula) mostrar.readObject();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        if (es == 0) {
-            System.out.println("No se ha encontrado a ninguna película con ese nombre");
-        } else {
-            es = 0;
-        }
         Main.Peliculas();
     }
 
-    public void Eliminar_Pelicula() throws IOException, ClassNotFoundException {
-        int id = -1;
+    public void Eliminar_Pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Eliminar pelicula");
-
-        Mostrar_Peliculas("1");
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula actor = (Pelicula) mostrar.readObject();
-        int ultimo_id = 0;
-        try {
-            while (actor != null) {
-                ultimo_id = actor.getId_pelicula();
-                actor = (Pelicula) mostrar.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar.close();
-
-        do {
-            try {
-                System.out.print("ID de la pelicula a eliminar: ");
-                id = scanner.nextInt();
-                if (id <= 0 || id > ultimo_id){
-                    System.out.println("Dato introducido erroneo");
-                }
-            } catch (Exception e) {
-                System.out.println("Dato introducido erroneo");
-            }
-        } while (id <= 0 || id > ultimo_id);
-
-        boolean s = false;
-        for (Pelicula d: peliculas){
-            if (d.getId_pelicula() == id){
-                peliculas.remove(d);
-                s = true;
-                break;
-            }
-        }
-
-        if (s){
-            System.out.println("borrado completado");
-        } else {
-            System.out.println("Error en el borrado");
-        }
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Peliculas.dat"));
-        int i_d = 0;
-        for (Pelicula d : peliculas) {
-            escribir.writeObject(d);
-            i_d++;
-        }
-        escribir.writeObject(null);
-        escribir.close();
         Main.Peliculas();
-
-
     }
 
-    public void Puntuacion_pelicula() throws IOException, ClassNotFoundException {
-        double punt = 0;
-        int id = 0;
-        double puntuacion = 0;
-        String nombre = "";
-        int cantidad = 0;
-        System.out.println();
+    public void Puntuacion_pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        System.out.println("Tu puntuacion de la pelicula");
-
-        Mostrar_Peliculas("1");
-
-
-        ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula pelicula = (Pelicula) mostrar.readObject();
-
-        int es = 0;
-        do {
-            System.out.println("nombre de la pelicula: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-
-
-            // Mostramos por pantalla todos los actores
-
-            try {
-                while (pelicula != null) {
-                    if (Objects.equals(pelicula.getNombre_pelicula(), nombre)) {
-                        es++;
-                        cantidad = pelicula.getCantidad_puntuado();
-                        puntuacion = pelicula.getPuntuacion();
-                        id = pelicula.getId_pelicula();
-                        pelicula = (Pelicula) mostrar.readObject();
-                    } else {
-                        pelicula = (Pelicula) mostrar.readObject();
-                    }
-                }
-            } catch (IOException e) {
-                System.out.println("Ha ocurrido un error");
-            } catch (ClassNotFoundException e) {
-                System.out.println("Ha habido algún error con la clase");
-            }
-            mostrar.close();
-            if (es == 0) {
-                System.out.println("No se ha encontrado a ningúna película con ese nombre");
-            }
-        } while (es == 0);
-
-
-        boolean as = true;
-        do {
-            try {
-                System.out.println("Inserta tu puntuacion del 0 al 10: ");
-                punt = scanner.nextDouble();
-            } catch (Exception e) {
-                System.out.println("Error");
-            }
-            if (punt < 0 || punt > 10){
-                System.out.println("Error. Inserta un valor entre el 0 y el 10");
-            } else {
-                as = false;
-            }
-        } while (as);
-
-        Pelicula pelicula1 = peliculas.get(id -1);
-        pelicula1.setPuntuacion(punt);
-        pelicula1.setCantidad_puntuado(1);
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Peliculas.dat"));
-
-        try {
-            for (Pelicula p: peliculas){
-                escribir.writeObject(p);
-            }
-            escribir.writeObject(null);
-        } catch (IOException e) {
-            System.out.println("Error al escribir en el fichero Peliculas.dat");
-        }
-        escribir.close();
         Main.Peliculas();
-
-        System.out.println("Puntuación realizada");
-        Main.Peliculas();
-
     }
 
     // Insertar una pelicula
 
-    public void Insertar_pelicula() throws IOException, ClassNotFoundException {
-        ObjectInputStream mostrar_peli = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
-        Pelicula pelicula = (Pelicula) mostrar_peli.readObject();
-        int ultimo_id = 0;
-        try {
-            while (pelicula != null) {
-                ultimo_id = pelicula.id_pelicula;
-                pelicula = (Pelicula) mostrar_peli.readObject();
-            }
-        } catch (IOException e) {
-            System.out.println("Ha ocurrido un error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ha habido algún error con la clase");
-        }
-        mostrar_peli.close();
+    public void Insertar_pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
-        String nombre = "";
-        String edad;
-        String dire = "";
-        Director dir = null;
-        String mus = "";
-        Musico mu = null;
-        String fot = "";
-        Fotografo fo = null;
-        int ano = 0;
-        int duracion = 0;
-        String act_pri = "";
-        Actor ac_pri = null;
-        String act_sec = "";
-        Actor ac_sec = null;
-        double puntuacion = 0.00;
-
-
-        System.out.println("Insertar pelicula");
-        try {
-            System.out.print("Nombre de la pelicula: ");
-            nombre = scanner.nextLine();
-            if (nombre == ""){
-                nombre = scanner.nextLine();
-            }
-        } catch (Exception e) {
-            System.out.println("Dato introducido erróneo");
-        }
-        Mostrar_Directores("1");
-
-        boolean aa = true;
-        do {
-            System.out.println("");
-            System.out.println("Inserta el nombre del director de la pelicula a partir de las mostradas");
-            dire = scanner.nextLine();
-            ObjectInputStream mostrar_dire = new ObjectInputStream(new FileInputStream("Directores.dat"));
-            Director director = (Director) mostrar_dire.readObject();
-
-            try {
-                while (director != null) {
-                    if (Objects.equals(director.getNombre(), dire)) {
-                        dir = director;
-                        director = (Director) mostrar_dire.readObject();
-                        aa = false;
-                    } else {
-                        director = (Director) mostrar_dire.readObject();
-                    }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            if (aa){
-                System.out.println("El director no existe. Vuelve a intentarlo");
-            }
-            mostrar_dire.close();
-        } while (aa);
-
-
-        Mostrar_Musicos("1");
-
-        boolean bb = true;
-        do {
-            System.out.println("");
-            System.out.println("Inserta el nombre del compositor de la pelicula a partir de las mostradas");
-            mus = scanner.nextLine();
-            ObjectInputStream mostrar_musi = new ObjectInputStream(new FileInputStream("Compositores.dat"));
-            Musico musico = (Musico) mostrar_musi.readObject();
-
-            try {
-                while (musico != null){
-                    if (Objects.equals(musico.getNombre(), mus)){
-                        mu = musico;
-                        musico = (Musico) mostrar_musi.readObject();
-                        bb = false;
-                    } else {
-                        musico = (Musico) mostrar_musi.readObject();
-                    }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            if (bb){
-                System.out.println("El compositor no existe. Vuelve a intentarlo");
-            }
-            mostrar_musi.close();
-        } while (bb);
-
-
-        Mostrar_Fotografos("1");
-
-        boolean cc = true;
-        do {
-            System.out.println("");
-            System.out.println("Inserta el nombre del fotógrafo de la película a partir de las mostradas");
-            fot = scanner.nextLine();
-            ObjectInputStream mostrar_foto = new ObjectInputStream(new FileInputStream("Fotografos.dat"));
-            Fotografo fotografo = (Fotografo) mostrar_foto.readObject();
-
-            try {
-                while (fotografo != null){
-                    if (Objects.equals(fotografo.getNombre(), fot)){
-                        fo = fotografo;
-                        fotografo = (Fotografo) mostrar_foto.readObject();
-                        cc = false;
-                    } else {
-                        fotografo = (Fotografo) mostrar_foto.readObject();
-                    }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            if (cc){
-                System.out.println("El fotografo no existe. Vuelve a intentarlo");
-            }
-
-            mostrar_foto.close();
-        } while (cc);
-
-        boolean dd = true;
-        do {
-            try {
-                System.out.print("Año de estreno de la pelicula: ");
-                ano = scanner.nextInt();
-            } catch (Exception e) {
-                System.out.println("Dato introducido erróneo");
-                dd = false;
-            }
-        } while (!dd);
-
-        boolean ee = true;
-        do {
-            try {
-                System.out.print("Duración (min) de la pelicula: ");
-                duracion = scanner.nextInt();
-            } catch (Exception e) {
-                System.out.println("Dato introducido erróneo");
-                ee = false;
-            }
-        } while (!ee);
-
-        Mostrar_Actores("1");
-
-        boolean ff = true;
-        do {
-            System.out.println("");
-            System.out.println("Inserta el nombre del actor principal de la película a partir de las mostradas");
-            act_pri = scanner.nextLine();
-            ObjectInputStream mostrar_actor_prin = new ObjectInputStream(new FileInputStream("Actores.dat"));
-            Actor actor = (Actor) mostrar_actor_prin.readObject();
-
-            try {
-                while (actor != null){
-                    if (Objects.equals(actor.getNombre(), act_pri)){
-                        ac_pri = actor;
-                        actor = (Actor) mostrar_actor_prin.readObject();
-                        ff = false;
-                    } else {
-                        actor = (Actor) mostrar_actor_prin.readObject();
-                    }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            if (ff){
-                System.out.println("El actor no existe. Vuelve a intentarlo");
-            }
-            mostrar_actor_prin.close();
-        } while (ff);
-
-        boolean gg = true;
-        do {
-            System.out.println("");
-            System.out.println("Inserta el nombre del actor secundario de la película a partir de las mostradas");
-            act_sec = scanner.nextLine();
-            ObjectInputStream mostrar_actor_sec = new ObjectInputStream(new FileInputStream("Actores.dat"));
-            Actor actor2 = (Actor) mostrar_actor_sec.readObject();
-
-            try {
-                while (actor2 != null){
-                    if (Objects.equals(actor2.getNombre(), act_sec)){
-                        ac_sec = actor2;
-                        actor2 = (Actor) mostrar_actor_sec.readObject();
-                        gg = false;
-                    } else {
-                        actor2 = (Actor) mostrar_actor_sec.readObject();
-                    }
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            if (gg){
-                System.out.println("El actor no existe. Vuelve a intentarlo");
-            }
-
-            mostrar_actor_sec.close();
-        } while (gg);
-
-        boolean zz = true;
-        do {
-            try {
-                System.out.print("Puntuación de la pelicula: ");
-                puntuacion = scanner.nextDouble();
-
-            } catch (Exception e) {
-                System.out.println("Dato introducido erróneo");
-                zz = false;
-            }
-        } while (!zz);
-
-
-        Pelicula pelicula1 = new Pelicula(ultimo_id+1, nombre, dir, mu, fo, ano, duracion, ac_pri, ac_sec, puntuacion);
-        peliculas.add(pelicula1);
-
-        ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Peliculas.dat"));
-
-        try {
-            for (Pelicula p: peliculas){
-                escribir.writeObject(p);
-            }
-            escribir.writeObject(null);
-        } catch (IOException e) {
-            System.out.println("Error al escribir en el fichero Peliculas.dat");
-        }
         Main.Peliculas();
     }
 
     // XML
 
 
-    public void Peliculas_XML() throws IOException, ClassNotFoundException {
+    public void Peliculas_XML() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+
+
+
 
         // ObjectInputStream para mostrar por pantalla los actores
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Peliculas.dat"));
@@ -1734,10 +570,10 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         }
         Result console= new StreamResult(System.out);
 
-        Main.Peliculas();
+        conectar_exist_db("Peliculas");
     }
 
-    public void Actores_XML() throws IOException, ClassNotFoundException {
+    public void Actores_XML() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
         // ObjectInputStream para mostrar por pantalla los actores
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Actores.dat"));
@@ -1791,10 +627,10 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         }
         Result console= new StreamResult(System.out);
 
-        Main.Actores();
+        conectar_exist_db("Actores");
     }
 
-    public void Directores_XML() throws IOException, ClassNotFoundException {
+    public void Directores_XML() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
         // ObjectInputStream para mostrar por pantalla los actores
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Directores.dat"));
@@ -1848,10 +684,10 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         }
         Result console= new StreamResult(System.out);
 
-        Main.Directores();
+        conectar_exist_db("Directores");
     }
 
-    public void Fotografos_XML() throws IOException, ClassNotFoundException {
+    public void Fotografos_XML() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
         // ObjectInputStream para mostrar por pantalla los actores
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Fotografos.dat"));
@@ -1905,10 +741,10 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         }
         Result console= new StreamResult(System.out);
 
-        Main.Fotografos();
+        conectar_exist_db("Fotografos");
     }
 
-    public void Musicos_XML() throws IOException, ClassNotFoundException {
+    public void Musicos_XML() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
 
         // ObjectInputStream para mostrar por pantalla los actores
         ObjectInputStream mostrar = new ObjectInputStream(new FileInputStream("Compositores.dat"));
@@ -1962,7 +798,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         }
         Result console= new StreamResult(System.out);
 
-        Main.Musicos();
+        conectar_exist_db("Compositores");
     }
 
 
@@ -1977,7 +813,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     }
 
 
-    public void Mail_Peliculas() throws IOException, ClassNotFoundException {
+    public void Mail_Peliculas() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         String correo;
 
         System.out.println("Enviar XML de Películas");
@@ -2038,12 +874,12 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
     }
 
-    public void imagen(){
+   /* public void imagen(){
         try(Viewer viewer = new Viewer("Peliculas.xml")){
             PngViewOptions viewOptions = new PngViewOptions();
             viewer.view(viewOptions);
         }
 
-    }
+    }*/
 
 }
