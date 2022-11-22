@@ -149,9 +149,10 @@ public class Main {
             System.out.println("1. Mostrar todos los directores");
             System.out.println("2. Mostrar por nombre del directores");
             System.out.println("3. Insertar director");
-            System.out.println("4. Eliminar director");
-            System.out.println("5. Directores a XML");
-            System.out.println("6. Volver");
+            System.out.println("4. Modificar director");
+            System.out.println("5. Eliminar director");
+            System.out.println("6. Directores a XML");
+            System.out.println("7. Volver");
             System.out.print("Selecciona el numero: ");
             num = scanner.nextInt();
             scanner.nextLine();
@@ -163,39 +164,52 @@ public class Main {
             case 1 -> funciones.Mostrar_Directores(null);
             case 2 -> funciones.Mostrar_Director_por_Nombre();
             case 3 -> funciones.Insertar_Directores();
-            case 4 -> funciones.Eliminar_Directores();
-            case 5 -> funciones.Directores_XML();
-            case 6 -> Menu_Principal();
+            case 4 -> funciones.Modificar_Directores();
+            case 5 -> funciones.Eliminar_Directores();
+            case 6 -> funciones.Directores_XML();
+            case 7 -> Menu_Principal();
             default -> System.out.println("Error");
         }
     }
 
     public static void Fotografos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
-        int num = 0;
         try {
-            System.out.println("\nMenú de los fotógrafos");
-            System.out.println("1. Mostrar todos los fotógrafos");
-            System.out.println("2. Mostrar por nombre del fotógrafos");
-            System.out.println("3. Insertar fotógrafo");
-            System.out.println("4. Eliminar fotógrafo");
-            System.out.println("5. Fotógrafos a XML");
-            System.out.println("6. Volver");
-            System.out.print("Selecciona el numero: ");
-            num = scanner.nextInt();
-            scanner.nextLine();
-        } catch (Exception e) {
-            System.out.println("Dato erróneo");
-        }
+            int num = 0;
+            try {
+                System.out.println("\nMenú de los fotógrafos");
+                System.out.println("1. Mostrar todos los fotógrafos");
+                System.out.println("2. Mostrar por nombre del fotógrafos");
+                System.out.println("3. Insertar fotógrafo");
+                System.out.println("4. Eliminar fotógrafo");
+                System.out.println("5. Fotógrafos a XML");
+                System.out.println("6. Volver");
+                System.out.print("Selecciona el numero: ");
+                num = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("Dato erróneo");
+            }
 
-        switch (num) {
-            case 1 -> funciones.Mostrar_Fotografos(null);
-            case 2 -> funciones.Mostrar_Fotografo_por_Nombre();
-            case 3 -> funciones.Insertar_Fotografo();
-            case 4 -> funciones.Eliminar_Fotografo();
-            case 5 -> funciones.Fotografos_XML();
-            case 6 -> Menu_Principal();
-            default -> System.out.println("Error");
+            switch (num) {
+                case 1 -> funciones.Mostrar_Fotografos(null);
+                case 2 -> funciones.Mostrar_Fotografo_por_Nombre();
+                case 3 -> funciones.Insertar_Fotografo();
+                case 4 -> funciones.Eliminar_Fotografo();
+                case 5 -> funciones.Fotografos_XML();
+                case 6 -> Menu_Principal();
+                default -> System.out.println("Error");
+            }
+        } catch (IOException e) {
+            System.out.println("Error");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Error");
+        } catch (XMLDBException e) {
+            System.out.println("Error");
+        } catch (InstantiationException e) {
+            System.out.println("Error");
+        } catch (IllegalAccessException e) {
+            System.out.println("Error");
         }
     }
 

@@ -67,7 +67,8 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             nuevoRecurso.setContent(archivo); //Asignamos el archivo
             col.storeResource(nuevoRecurso); //Lo almacenamos en la colección
         }
-
+        assert col != null;
+        col.close();
     }
 
 
@@ -233,16 +234,101 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar todos los directores
 
     public void Mostrar_Directores(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
 
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $em in /directores/director\n" +
+                    "return $em");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+
+        if (s == null) {
             Main.Directores();
+        }
 
     }
 
     // Mostrar director por nombre
 
     public void Mostrar_Director_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
 
-        Main.Directores();
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Directores("1");
+
+        try {
+            System.out.println("ID del director: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $enp in /directores/director\n" +
+                    "where data($enp/@id) = " + ID + " \n" +
+                    "return $enp");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+            } catch (Exception e) {
+                System.out.println("Error al inicializar la BD eXist");
+                e.printStackTrace();
+            }
+            assert col != null;
+            col.close();
+
+            Main.Directores();
     }
 
 /*    public void Array_Directores() throws IOException, ClassNotFoundException {
@@ -269,13 +355,219 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Insertar directores
 
     public void Insertar_Directores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID = -10;
+        String nombre = null;
+        int edad = -10;
+        String nacionalidad = null;
+
+        System.out.println("Insertar un director");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Directores("1");
+
+        try {
+            do {
+                System.out.println("ID del director: ");
+                ID = scanner.nextInt();
+                scanner.nextLine();
+                if (ID < 0){
+                    System.out.println("Error al insertar ID");
+                }
+            }while (ID < 0);
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Nombre del director: ");
+                nombre = scanner.nextLine();
+                if (Objects.equals(nombre, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(nombre, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Edad del director: ");
+                edad = scanner.nextInt();
+                scanner.nextLine();
+                if (edad < 0){
+                    System.out.println("Error al ingresar la edad");
+                }
+            }while (edad < 0);
+
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Nacionalidad del director: ");
+                nacionalidad = scanner.nextLine();
+                if (Objects.equals(nacionalidad, "")){
+                    System.out.println("no puedes dejar el campo en blaco");
+                }
+            }while (Objects.equals(nacionalidad, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update insert\n" +
+                    "<director id= '"+ ID +"' ><nombre>"+ nombre +"</nombre><edad>"+ edad +"</edad><nacionalidad>"+ nacionalidad +"</nacionalidad>\n" +
+                    "\t\t</director>\n" +
+                    "into /directores");
+
+            System.out.println("Director almacenado");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+
+        assert col != null;
+        col.close();
 
         Main.Directores();
+    }
+
+    // Modificar directores
+
+    public void Modificar_Directores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+        String campo = null;
+        String valor = null;
+
+        System.out.println("Modificar a un director");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Directores("1");
+
+        try {
+            System.out.println("ID del director: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            do {
+                System.out.println("Campo a modificar: ");
+                campo = scanner.nextLine();
+                if (Objects.equals(campo, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(campo, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Valor a modificar: ");
+                valor = scanner.nextLine();
+                if (Objects.equals(valor, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(valor, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update value /directores/director[@id="+ ID +"]/"+ campo +"\n" +
+                    "with '"+ valor +"'");
+
+            System.out.println("Modificación concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+
+        Main.Directores();
+
+
     }
 
     // Borrar directores
 
     public void Eliminar_Directores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+
+        System.out.println("Eliminar a un director");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Directores("1");
+
+        try {
+            System.out.println("ID del director: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update delete /directores/director[@id="+ ID +"]");
+
+            System.out.println("Borrado concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
 
         Main.Directores();
 
@@ -286,8 +578,42 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar todos los fotógrafos
 
     public void Mostrar_Fotografos(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
 
-            Main.Fotografos();
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $em in /fotografos/fotografo return $em");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+
+        Main.Fotografos();
     }
 
     // Mostrar fotógrafo por nombre
@@ -334,14 +660,80 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar todos los compositores
 
     public void Mostrar_Musicos(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
 
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $em in /compositores/compositor return $em");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
             Main.Musicos();
     }
 
     // Mostrar músico por nombre
 
     public void Mostrar_Musico_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
 
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $em in /compositores/compositor return $em");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Musicos();
     }
 
@@ -381,7 +773,40 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar todos los actores
 
     public void Mostrar_Actores(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
 
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $em in /actores/actor return $em");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
             Main.Actores();
     }
 
@@ -428,7 +853,57 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar todas las peliculas
 
     public void Mostrar_Peliculas(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
 
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "return \n" +
+                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
             Main.Peliculas();
     }
 
@@ -519,30 +994,30 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                 Element director = document.createElement("director");
                 raiz.appendChild(director);
                 director.setAttribute("id", String.valueOf(pelicula.getDirector().getId_director()));
-                CrearElemento("nombre", pelicula.getDirector().getNombre(), director, document);
-                CrearElemento("edad", pelicula.getDirector().getEdad(), director, document);
+   //             CrearElemento("nombre", pelicula.getDirector().getNombre(), director, document);
+   //             CrearElemento("edad", pelicula.getDirector().getEdad(), director, document);
                 Element compositor = document.createElement("compositor");
                 raiz.appendChild(compositor);
                 compositor.setAttribute("id", String.valueOf(pelicula.getMusico().getId_musico()));
-                CrearElemento("nombre", pelicula.getMusico().getNombre(), compositor, document);
-                CrearElemento("edad", pelicula.getMusico().getEdad(), compositor, document);
+   //             CrearElemento("nombre", pelicula.getMusico().getNombre(), compositor, document);
+   //             CrearElemento("edad", pelicula.getMusico().getEdad(), compositor, document);
                 Element fotografo = document.createElement("fotografo");
                 raiz.appendChild(fotografo);
                 fotografo.setAttribute("id", String.valueOf(pelicula.getFotografo().getId_fotografo()));
-                CrearElemento("nombre", pelicula.getFotografo().getNombre(), fotografo, document);
-                CrearElemento("edad", pelicula.getFotografo().getEdad(), fotografo, document);
+   //             CrearElemento("nombre", pelicula.getFotografo().getNombre(), fotografo, document);
+   //             CrearElemento("edad", pelicula.getFotografo().getEdad(), fotografo, document);
                 CrearElemento("año_estreno", String.valueOf(pelicula.getAno()), raiz, document);
                 CrearElemento("duracion", String.valueOf(pelicula.getDuracion()), raiz, document);
                 Element actor_pri = document.createElement("actor_principal");
                 raiz.appendChild(actor_pri);
                 actor_pri.setAttribute("id", String.valueOf(pelicula.getActor_prota().getId_actor()));
-                CrearElemento("nombre", pelicula.getActor_prota().getNombre(), actor_pri, document);
-                CrearElemento("edad", pelicula.getActor_prota().getEdad(), actor_pri, document);
+   //             CrearElemento("nombre", pelicula.getActor_prota().getNombre(), actor_pri, document);
+   //             CrearElemento("edad", pelicula.getActor_prota().getEdad(), actor_pri, document);
                 Element actor_sec = document.createElement("actor_secundario");
                 raiz.appendChild(actor_sec);
                 actor_sec.setAttribute("id", String.valueOf(pelicula.getActor_secundario().getId_actor()));
-                CrearElemento("nombre", pelicula.getActor_secundario().getNombre(), actor_sec, document);
-                CrearElemento("edad", pelicula.getActor_secundario().getEdad(), actor_sec, document);
+   //             CrearElemento("nombre", pelicula.getActor_secundario().getNombre(), actor_sec, document);
+   //             CrearElemento("edad", pelicula.getActor_secundario().getEdad(), actor_sec, document);
                 CrearElemento("puntuación", String.valueOf(pelicula.getPuntuacion()), raiz, document);
                 pelicula = (Pelicula) mostrar.readObject();
             }
@@ -709,7 +1184,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         // Mostramos por pantalla todas las peliculas
         try {
             while (fotografo != null) {
-                Element raiz = document.createElement("director");
+                Element raiz = document.createElement("fotografo");
                 document.getDocumentElement().appendChild(raiz);
                 raiz.setAttribute("id", String.valueOf(fotografo.getId_fotografo()));
                 CrearElemento("nombre", fotografo.getNombre(), raiz, document);
