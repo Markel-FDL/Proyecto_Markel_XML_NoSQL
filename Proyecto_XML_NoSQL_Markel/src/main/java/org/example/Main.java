@@ -120,9 +120,10 @@ public class Main {
             System.out.println("1. Mostrar todos los actores");
             System.out.println("2. Mostrar por nombre del actor");
             System.out.println("3. Insertar actor");
-            System.out.println("4. Eliminar actor");
-            System.out.println("5. Actores a XML");
-            System.out.println("6. Volver");
+            System.out.println("4. Modificar actor");
+            System.out.println("5. Eliminar actor");
+            System.out.println("6. Actores a XML");
+            System.out.println("7. Volver");
             System.out.print("Selecciona el numero: ");
             num = scanner.nextInt();
             scanner.nextLine();
@@ -134,9 +135,10 @@ public class Main {
             case 1 -> funciones.Mostrar_Actores(null);
             case 2 -> funciones.Mostrar_Actor_por_Nombre();
             case 3 -> funciones.Insertar_Actor();
-            case 4 -> funciones.Eliminar_Actores();
-            case 5 -> funciones.Actores_XML();
-            case 6 -> Menu_Principal();
+            case 4 -> funciones.Modificar_Actor();
+            case 5 -> funciones.Eliminar_Actores();
+            case 6 -> funciones.Actores_XML();
+            case 7 -> Menu_Principal();
             default -> System.out.println("Error");
         }
     }
@@ -181,9 +183,10 @@ public class Main {
                 System.out.println("1. Mostrar todos los fotógrafos");
                 System.out.println("2. Mostrar por nombre del fotógrafos");
                 System.out.println("3. Insertar fotógrafo");
-                System.out.println("4. Eliminar fotógrafo");
-                System.out.println("5. Fotógrafos a XML");
-                System.out.println("6. Volver");
+                System.out.println("4. Modificar fotógrafo");
+                System.out.println("5. Eliminar fotógrafo");
+                System.out.println("6. Fotógrafos a XML");
+                System.out.println("7. Volver");
                 System.out.print("Selecciona el numero: ");
                 num = scanner.nextInt();
                 scanner.nextLine();
@@ -195,9 +198,10 @@ public class Main {
                 case 1 -> funciones.Mostrar_Fotografos(null);
                 case 2 -> funciones.Mostrar_Fotografo_por_Nombre();
                 case 3 -> funciones.Insertar_Fotografo();
-                case 4 -> funciones.Eliminar_Fotografo();
-                case 5 -> funciones.Fotografos_XML();
-                case 6 -> Menu_Principal();
+                case 4 -> funciones.Modificar_Fotografos();
+                case 5 -> funciones.Eliminar_Fotografo();
+                case 6 -> funciones.Fotografos_XML();
+                case 7 -> Menu_Principal();
                 default -> System.out.println("Error");
             }
         } catch (IOException e) {
@@ -221,9 +225,10 @@ public class Main {
             System.out.println("1. Mostrar todos los compositores");
             System.out.println("2. Mostrar por nombre del compositores");
             System.out.println("3. Insertar compositor");
-            System.out.println("4. Eliminar compositor");
-            System.out.println("5. Compositores a XML");
-            System.out.println("6. Volver");
+            System.out.println("4. Modificar compositor");
+            System.out.println("5. Eliminar compositor");
+            System.out.println("6. Compositores a XML");
+            System.out.println("7. Volver");
             System.out.print("Selecciona el numero: ");
             num = scanner.nextInt();
             scanner.nextLine();
@@ -235,9 +240,10 @@ public class Main {
             case 1 -> funciones.Mostrar_Musicos(null);
             case 2 -> funciones.Mostrar_Musico_por_Nombre();
             case 3 -> funciones.Insertar_Musico();
-            case 4 -> funciones.Eliminar_Musicos();
-            case 5 -> funciones.Musicos_XML();
-            case 6 -> Menu_Principal();
+            case 4 -> funciones.Modificar_Musico();
+            case 5 -> funciones.Eliminar_Musicos();
+            case 6 -> funciones.Musicos_XML();
+            case 7 -> Menu_Principal();
             default -> System.out.println("Error");
         }
     }

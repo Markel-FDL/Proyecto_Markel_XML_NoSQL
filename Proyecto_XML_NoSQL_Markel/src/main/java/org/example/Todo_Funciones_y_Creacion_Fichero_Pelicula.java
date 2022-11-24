@@ -619,7 +619,54 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar fotógrafo por nombre
 
     public void Mostrar_Fotografo_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
 
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Fotografos("1");
+
+        try {
+            System.out.println("ID del fotografo: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $enp in /fotografos/fotografo\n" +
+                    "where data($enp/@id) = " + ID + " \n" +
+                    "return $enp");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Fotografos();
     }
 
@@ -647,12 +694,217 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Insertar fotógrafos
 
     public void Insertar_Fotografo() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID = -10;
+        String nombre = null;
+        int edad = -10;
+        String nacionalidad = null;
+
+        System.out.println("Insertar un fotografo");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Fotografos("1");
+
+        try {
+            do {
+                System.out.println("ID del fotografo: ");
+                ID = scanner.nextInt();
+                scanner.nextLine();
+                if (ID < 0){
+                    System.out.println("Error al insertar ID");
+                }
+            }while (ID < 0);
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Nombre del fotografo: ");
+                nombre = scanner.nextLine();
+                if (Objects.equals(nombre, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(nombre, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Edad del fotógrafo: ");
+                edad = scanner.nextInt();
+                scanner.nextLine();
+                if (edad < 0){
+                    System.out.println("Error al ingresar la edad");
+                }
+            }while (edad < 0);
+
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Nacionalidad del fotógrafo: ");
+                nacionalidad = scanner.nextLine();
+                if (Objects.equals(nacionalidad, "")){
+                    System.out.println("no puedes dejar el campo en blaco");
+                }
+            }while (Objects.equals(nacionalidad, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update insert\n" +
+                    "<fotografo id= '"+ ID +"' ><nombre>"+ nombre +"</nombre><edad>"+ edad +"</edad><nacionalidad>"+ nacionalidad +"</nacionalidad>\n" +
+                    "\t\t</fotografo>\n" +
+                    "into /fotografos");
+
+            System.out.println("Fotografo almacenado");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+
+        assert col != null;
+        col.close();
 
         Main.Fotografos();
     }
 
-    public void Eliminar_Fotografo() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+    // Modificar fotografo
 
+    public void Modificar_Fotografos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+        String campo = null;
+        String valor = null;
+
+        System.out.println("Modificar a un fotógrafo");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Fotografos("1");
+
+        try {
+            System.out.println("ID del fotografo: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            do {
+                System.out.println("Campo a modificar: ");
+                campo = scanner.nextLine();
+                if (Objects.equals(campo, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(campo, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Valor a modificar: ");
+                valor = scanner.nextLine();
+                if (Objects.equals(valor, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(valor, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update value /fotografos/fotografo[@id="+ ID +"]/"+ campo +"\n" +
+                    "with '"+ valor +"'");
+
+            System.out.println("Modificación concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+
+        Main.Directores();
+
+
+    }
+
+    public void Eliminar_Fotografo() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+
+        System.out.println("Eliminar a un fotógrafo");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Fotografos("1");
+
+        try {
+            System.out.println("ID del fotógrafo: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update delete /fotografos/fotografo[@id="+ ID +"]");
+
+            System.out.println("Borrado concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Fotografos();
     }
 
@@ -700,11 +952,23 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar músico por nombre
 
     public void Mostrar_Musico_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+
         String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
         Collection col = null; // Colección
         String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
         String usu="admin"; //Usuario
         String usuPwd="12345"; //Clave
+
+        Mostrar_Musicos("1");
+
+        try {
+            System.out.println("ID del compositor: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             Class cl = Class.forName(driver); //Cargar del driver
@@ -715,7 +979,9 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if(col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query ("for $em in /compositores/compositor return $em");
+            ResourceSet result = servicio.query ("for $enp in /compositores/compositor\n" +
+                    "where data($enp/@id) = " + ID + " \n" +
+                    "return $enp");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -760,11 +1026,216 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Insertar músico
 
     public void Insertar_Musico() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID = -10;
+        String nombre = null;
+        int edad = -10;
+        String nacionalidad = null;
 
+        System.out.println("Insertar un compositor");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Musicos("1");
+
+        try {
+            do {
+                System.out.println("ID del compositor: ");
+                ID = scanner.nextInt();
+                scanner.nextLine();
+                if (ID < 0){
+                    System.out.println("Error al insertar ID");
+                }
+            }while (ID < 0);
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Nombre del compositor: ");
+                nombre = scanner.nextLine();
+                if (Objects.equals(nombre, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(nombre, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Edad del compositor: ");
+                edad = scanner.nextInt();
+                scanner.nextLine();
+                if (edad < 0){
+                    System.out.println("Error al ingresar la edad");
+                }
+            }while (edad < 0);
+
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Nacionalidad del compositor: ");
+                nacionalidad = scanner.nextLine();
+                if (Objects.equals(nacionalidad, "")){
+                    System.out.println("no puedes dejar el campo en blaco");
+                }
+            }while (Objects.equals(nacionalidad, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update insert\n" +
+                    "<compositor id= '"+ ID +"' ><nombre>"+ nombre +"</nombre><edad>"+ edad +"</edad><nacionalidad>"+ nacionalidad +"</nacionalidad>\n" +
+                    "\t\t</compositor>\n" +
+                    "into /compositores");
+
+            System.out.println("Compositor almacenado");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+
+        assert col != null;
+        col.close();
         Main.Musicos();
     }
 
+    // Modificar musico
+
+    public void Modificar_Musico() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+        String campo = null;
+        String valor = null;
+
+        System.out.println("Modificar a un compositor");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Musicos("1");
+
+        try {
+            System.out.println("ID del compositor: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            do {
+                System.out.println("Campo a modificar: ");
+                campo = scanner.nextLine();
+                if (Objects.equals(campo, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(campo, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Valor a modificar: ");
+                valor = scanner.nextLine();
+                if (Objects.equals(valor, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(valor, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update value /compositores/compositor[@id="+ ID +"]/"+ campo +"\n" +
+                    "with '"+ valor +"'");
+
+            System.out.println("Modificación concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+
+        Main.Directores();
+
+
+    }
+
     public void Eliminar_Musicos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+
+        System.out.println("Eliminar a un compositor");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Musicos("1");
+
+        try {
+            System.out.println("ID del compositor: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update delete /compositores/compositor[@id="+ ID +"]");
+
+            System.out.println("Borrado concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Musicos();
 
     }
@@ -813,7 +1284,40 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar actor por nombre
 
     public void Mostrar_Actor_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
 
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $em in /actores/actor return $em");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Actores();
     }
 
@@ -840,12 +1344,216 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Insertar actor
 
     public void Insertar_Actor() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID = -10;
+        String nombre = null;
+        int edad = -10;
+        String nacionalidad = null;
 
+        System.out.println("Insertar un actor");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Actores("1");
+
+        try {
+            do {
+                System.out.println("ID del actor: ");
+                ID = scanner.nextInt();
+                scanner.nextLine();
+                if (ID < 0){
+                    System.out.println("Error al insertar ID");
+                }
+            }while (ID < 0);
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Nombre del actor: ");
+                nombre = scanner.nextLine();
+                if (Objects.equals(nombre, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(nombre, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Edad del actor: ");
+                edad = scanner.nextInt();
+                scanner.nextLine();
+                if (edad < 0){
+                    System.out.println("Error al ingresar la edad");
+                }
+            }while (edad < 0);
+
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Nacionalidad del actor: ");
+                nacionalidad = scanner.nextLine();
+                if (Objects.equals(nacionalidad, "")){
+                    System.out.println("no puedes dejar el campo en blaco");
+                }
+            }while (Objects.equals(nacionalidad, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update insert\n" +
+                    "<actor id= '"+ ID +"' ><nombre>"+ nombre +"</nombre><edad>"+ edad +"</edad><nacionalidad>"+ nacionalidad +"</nacionalidad>\n" +
+                    "\t\t</actor>\n" +
+                    "into /actores");
+
+            System.out.println("Actor almacenado");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+
+        assert col != null;
+        col.close();
         Main.Actores();
     }
 
-    public void Eliminar_Actores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+    // Modificar actor
 
+    public void Modificar_Actor() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+        String campo = null;
+        String valor = null;
+
+        System.out.println("Modificar a un actor");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Musicos("1");
+
+        try {
+            System.out.println("ID del actor: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            do {
+                System.out.println("Campo a modificar: ");
+                campo = scanner.nextLine();
+                if (Objects.equals(campo, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(campo, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Valor a modificar: ");
+                valor = scanner.nextLine();
+                if (Objects.equals(valor, "")){
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            }while (Objects.equals(valor, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update value /actores/actor[@id="+ ID +"]/"+ campo +"\n" +
+                    "with '"+ valor +"'");
+
+            System.out.println("Modificación concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+
+        Main.Directores();
+
+
+    }
+
+    public void Eliminar_Actores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+
+        System.out.println("Eliminar a un actor");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Actores("1");
+
+        try {
+            System.out.println("ID del actor: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update delete /actores/actor[@id="+ ID +"]");
+
+            System.out.println("Borrado concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Actores();
     }
 
