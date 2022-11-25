@@ -1284,11 +1284,23 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // Mostrar actor por nombre
 
     public void Mostrar_Actor_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+
         String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
         Collection col = null; // Colección
         String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
         String usu="admin"; //Usuario
         String usuPwd="12345"; //Clave
+
+        Mostrar_Actores("1");
+
+        try {
+            System.out.println("ID del actor: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             Class cl = Class.forName(driver); //Cargar del driver
@@ -1299,7 +1311,9 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if(col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query ("for $em in /actores/actor return $em");
+            ResourceSet result = servicio.query ("for $enp in /actores/actor\n" +
+                    "where data($enp/@id) = " + ID + " \n" +
+                    "return $enp");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1617,45 +1631,619 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
     // Mostrar la pelicula con el nombre
 
-    public void Mostrar_Pelicula_por_Nombre() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+    public void Mostrar_Pelicula_por_ID() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
 
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Peliculas("1");
+
+        try {
+            System.out.println("ID de la película: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "where data($emp/@id) = "+ ID +"\n" +
+                    "return \n" +
+                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
+                    "\n");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Peliculas();
     }
 
     // Mostrar la pelicula con el nombre del director
 
     public void Mostrar_Pelicula_por_Director() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
 
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Directores("1");
+
+        try {
+            System.out.println("ID del director: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "where data($emp/director/@id) = "+ ID +"\n" +
+                    "return \n" +
+                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
+                    "\n");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Peliculas();
     }
 
     // Mostrar la pelicula con el nombre del músico
 
     public void Mostrar_Pelicula_por_Musico() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
 
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Musicos("1");
+
+        try {
+            System.out.println("ID del musico: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "where data($emp/compositores/@id) = "+ ID +"\n" +
+                    "return \n" +
+                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
+                    "\n");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Peliculas();
     }
 
     // Mostrar la película con el nombre del fotógrafo
 
     public void Mostrar_Pelicula_por_Fotografo() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
 
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Fotografos("1");
+
+        try {
+            System.out.println("ID del fotógrafo: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "where data($emp/fotografo/@id) = "+ ID +"\n" +
+                    "return \n" +
+                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
+                    "\n");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Peliculas();
     }
 
     // Mostrar la película con el nombre del actor
 
-    public void Mostrar_Pelicula_por_Actor() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+    public void Mostrar_Pelicula_por_Actor_Principal() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
 
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Actores("1");
+
+        try {
+            System.out.println("ID del actor principal: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "where data($emp/actor_principal/@id) = "+ ID +"\n" +
+                    "return \n" +
+                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
+                    "\n");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+        Main.Peliculas();
+    }
+
+    public void Mostrar_Pelicula_por_Actor_Secundario() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Actores("1");
+
+        try {
+            System.out.println("ID del actor secundario: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "where data($emp/actor_secundario/@id) = "+ ID +"\n" +
+                    "return \n" +
+                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
+                    "\n");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Peliculas();
     }
 
     public void Eliminar_Pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
 
+        System.out.println("Eliminar a una película");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+        Mostrar_Peliculas("1");
+
+        try {
+            System.out.println("ID de la película: ");
+            ID = scanner.nextInt();
+            scanner.nextLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query ("update delete /peliculas/pelicula[@id="+ ID +"]");
+
+            System.out.println("Borrado concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Peliculas();
     }
 
     public void Puntuacion_pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI="xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu="admin"; //Usuario
+        String usuPwd="12345"; //Clave
+
+
+
+        String nombre = "";
+        String edad;
+        int dire = -10;
+        String mus = "";
+        int mu = -10;
+        String fot = "";
+        int fo = -10;
+        int ano = 0;
+        int duracion = 0;
+        String act_pri = "";
+        int ac_pri = -10;
+        String act_sec = "";
+        int ac_sec = -10;
+        double puntuacion = 0.00;
+
+        System.out.println("Insertar pelicula");
+        try {
+            System.out.print("Nombre de la pelicula: ");
+            nombre = scanner.nextLine();
+            if (Objects.equals(nombre, "")){
+                nombre = scanner.nextLine();
+            }
+        } catch (Exception e) {
+            System.out.println("Dato introducido erróneo");
+        }
+
+
+        Mostrar_Directores("1");
+        System.out.println("");
+        System.out.println("Inserta el ID del director de la pelicula a partir de las mostradas");
+        dire = scanner.nextInt();
+
+        Mostrar_Musicos("1");
+
+        System.out.println("");
+        System.out.println("Inserta el ID del compositor de la pelicula a partir de las mostradas");
+        mu = scanner.nextInt();
+
+        Mostrar_Fotografos("1");
+
+        System.out.println("");
+        System.out.println("Inserta el nombre del fotógrafo de la película a partir de las mostradas");
+        fo = scanner.nextInt();
+
+        boolean dd = true;
+        do {
+            try {
+                System.out.print("Año de estreno de la pelicula: ");
+                ano = scanner.nextInt();
+            } catch (Exception e) {
+                System.out.println("Dato introducido erróneo");
+                dd = false;
+            }
+        } while (!dd);
+
+        boolean ee = true;
+        do {
+            try {
+                System.out.print("Duración (min) de la pelicula: ");
+                duracion = scanner.nextInt();
+            } catch (Exception e) {
+                System.out.println("Dato introducido erróneo");
+                ee = false;
+            }
+        } while (!ee);
+
+        Mostrar_Actores("1");
+
+        System.out.println("");
+        System.out.println("Inserta el ID del actor principal de la película a partir de las mostradas");
+        ac_pri = scanner.nextInt();
+
+        System.out.println("");
+        System.out.println("Inserta el ID del actor secundario de la película a partir de las mostradas");
+        ac_sec = scanner.nextInt();
+
+        boolean zz = true;
+        do {
+            try {
+                System.out.print("Puntuación de la pelicula: ");
+                puntuacion = scanner.nextDouble();
+
+            } catch (Exception e) {
+                System.out.println("Dato introducido erróneo");
+                zz = false;
+            }
+        } while (!zz);
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if(col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            // Modificar, está mal
+            ResourceSet result = servicio.query ("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "where data($emp/fotografo/@id) = "+ "" +"\n" +
+                    "return \n" +
+                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
+                    "\n");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());}
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+
+
 
         Main.Peliculas();
     }

@@ -82,13 +82,14 @@ public class Main {
             System.out.println("3. Mostrar por nombre del director");
             System.out.println("4. Mostrar por nombre del compositor");
             System.out.println("5. Mostrar por nombre del fotógrafo");
-            System.out.println("6. Mostrar por nombre del actor");
-            System.out.println("7. Insertar puntuación de una película");
-            System.out.println("8. Insertar película");
-            System.out.println("9. Eliminar película");
-            System.out.println("10. Exportar las películas a XML");
-            System.out.println("11. Enviar XML por correo");
-            System.out.println("12. Volver");
+            System.out.println("6. Mostrar por nombre del actor principal");
+            System.out.println("7. Mostrar por nombre del actor secundario");
+            System.out.println("8. Insertar puntuación de una película");
+            System.out.println("9. Insertar película");
+            System.out.println("10. Eliminar película");
+            System.out.println("11. Exportar las películas a XML");
+            System.out.println("12. Enviar XML por correo");
+            System.out.println("13. Volver");
             System.out.print("Selecciona el numero: ");
             num = scanner.nextInt();
         } catch (Exception e) {
@@ -97,17 +98,18 @@ public class Main {
 
         switch (num) {
             case 1 -> funciones.Mostrar_Peliculas(null);
-            case 2 -> funciones.Mostrar_Pelicula_por_Nombre();
+            case 2 -> funciones.Mostrar_Pelicula_por_ID();
             case 3 -> funciones.Mostrar_Pelicula_por_Director();
             case 4 -> funciones.Mostrar_Pelicula_por_Musico();
             case 5 -> funciones.Mostrar_Pelicula_por_Fotografo();
-            case 6 -> funciones.Mostrar_Pelicula_por_Actor();
-            case 7 -> funciones.Puntuacion_pelicula();
-            case 8 -> funciones.Insertar_pelicula();
-            case 9 -> funciones.Eliminar_Pelicula();
-            case 10 -> funciones.Peliculas_XML();
-            case 11 -> funciones.Mail_Peliculas();
-            case 12 -> Menu_Principal();
+            case 6 -> funciones.Mostrar_Pelicula_por_Actor_Principal();
+            case 7 -> funciones.Mostrar_Pelicula_por_Actor_Secundario();
+            case 8 -> funciones.Puntuacion_pelicula();
+            case 9 -> funciones.Insertar_pelicula();
+            case 10 -> funciones.Eliminar_Pelicula();
+            case 11 -> funciones.Peliculas_XML();
+            case 12 -> funciones.Mail_Peliculas();
+            case 13 -> Menu_Principal();
             default -> System.out.println("Error");
         }
     }
