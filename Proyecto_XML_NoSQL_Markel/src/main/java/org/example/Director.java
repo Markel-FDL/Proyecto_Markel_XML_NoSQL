@@ -9,11 +9,11 @@ public class Director implements Serializable {
     String edad;
     //int participaciones;
 
-    public Director(){
+    public Director() {
 
     }
 
-    public Director(int id_director, String nombre, String edad){
+    public Director(int id_director, String nombre, String edad) {
         this.id_director = id_director;
         this.nombre = nombre;
         this.edad = edad;
@@ -43,7 +43,7 @@ public class Director implements Serializable {
         this.edad = edad;
     }
 
-    public void Mostrar(){
+    public void Mostrar() {
         System.out.println("ID: " + id_director +
                 " Nombre: " + nombre +
                 " Edad: " + edad);

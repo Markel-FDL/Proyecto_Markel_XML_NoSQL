@@ -1,18 +1,19 @@
 package org.example;
+
 import java.io.Serializable;
 
-public class Fotografo implements Serializable{
+public class Fotografo implements Serializable {
 
     int id_fotografo;
     String nombre;
     String edad;
     //int participaciones;
 
-    public Fotografo(){
+    public Fotografo() {
 
     }
 
-    public Fotografo(int id_fotografo, String nombre, String edad){
+    public Fotografo(int id_fotografo, String nombre, String edad) {
         this.id_fotografo = id_fotografo;
         this.nombre = nombre;
         this.edad = edad;
@@ -42,7 +43,7 @@ public class Fotografo implements Serializable{
         this.edad = edad;
     }
 
-    public void Mostrar(){
+    public void Mostrar() {
         System.out.println("ID: " + id_fotografo +
                 " Nombre: " + nombre +
                 " Edad: " + edad);

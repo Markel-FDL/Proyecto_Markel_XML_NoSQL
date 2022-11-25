@@ -1,4 +1,5 @@
 package org.example;
+
 import java.io.Serializable;
 import java.security.PublicKey;
 
@@ -17,11 +18,11 @@ public class Pelicula implements Serializable {
 
     int cantidad_puntuado;
 
-    public Pelicula(){
+    public Pelicula() {
 
     }
 
-    public Pelicula(int id_pelicula, String nombre_pelicula, Director director, Musico musico, Fotografo fotografo, int ano, int duracion, Actor actor_prota, Actor actor_secundario, double puntuacion){
+    public Pelicula(int id_pelicula, String nombre_pelicula, Director director, Musico musico, Fotografo fotografo, int ano, int duracion, Actor actor_prota, Actor actor_secundario, double puntuacion) {
         this.id_pelicula = id_pelicula;
         this.nombre_pelicula = nombre_pelicula;
         this.director = director;
@@ -122,7 +123,7 @@ public class Pelicula implements Serializable {
         this.cantidad_puntuado += cantidad_puntuado;
     }
 
-    public void Mostrar(){
+    public void Mostrar() {
         System.out.println("ID: " + id_pelicula +
                 " Nombre: " + nombre_pelicula +
                 " Director: " + director.nombre +

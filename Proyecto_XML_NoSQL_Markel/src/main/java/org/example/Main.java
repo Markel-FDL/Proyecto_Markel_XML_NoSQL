@@ -20,7 +20,7 @@ public class Main {
         System.out.println("Inicializando aplicación");
         System.out.print("Queres cargar los datos por defecto? (En caso de hacerlo, perderas los datos que hayas añadido)(s para aceptar; otra tecla para rechazar ): ");
         String sn = scanner.next();
-        if (Objects.equals(sn, "s") || Objects.equals(sn, "S")){
+        if (Objects.equals(sn, "s") || Objects.equals(sn, "S")) {
             System.out.println("Cargando datos...");
             Creacion_fichero_Actor actor = new Creacion_fichero_Actor();
             Creacion_fichero_Director director = new Creacion_fichero_Director();
@@ -38,22 +38,27 @@ public class Main {
             funciones.Array_Fotografo();
             funciones.Array_Musico();
             funciones.Array_Actores();
-*/        }
+*/
+        }
         Menu_Principal();
     }
 
     public static void Menu_Principal() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         int num = 0;
+
         try {
-            System.out.println("\nMenu: ");
-            System.out.println("1. Películas");
-            System.out.println("2. Actores");
-            System.out.println("3. Directores");
-            System.out.println("4. Fotógrafos");
-            System.out.println("5. Compositores");
-            System.out.println("6. Salir");
-            System.out.print("Selecciona el numero: ");
-            num = scanner.nextInt();
+            do {
+                System.out.println("\nMenu: ");
+                System.out.println("1. Películas");
+                System.out.println("2. Actores");
+                System.out.println("3. Directores");
+                System.out.println("4. Fotógrafos");
+                System.out.println("5. Compositores");
+                System.out.println("6. Salir");
+                System.out.print("Selecciona el numero: ");
+                num = scanner.nextInt();
+            }while (num < 0 || num > 6);
+
         } catch (Exception e) {
             System.out.println("Dato erróneo");
         }
@@ -76,22 +81,25 @@ public class Main {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {
-            System.out.println("\nMenú de las películas");
-            System.out.println("1. Mostrar todas las películas");
-            System.out.println("2. Mostrar por nombre de la película");
-            System.out.println("3. Mostrar por nombre del director");
-            System.out.println("4. Mostrar por nombre del compositor");
-            System.out.println("5. Mostrar por nombre del fotógrafo");
-            System.out.println("6. Mostrar por nombre del actor principal");
-            System.out.println("7. Mostrar por nombre del actor secundario");
-            System.out.println("8. Insertar puntuación de una película");
-            System.out.println("9. Insertar película");
-            System.out.println("10. Eliminar película");
-            System.out.println("11. Exportar las películas a XML");
-            System.out.println("12. Enviar XML por correo");
-            System.out.println("13. Volver");
-            System.out.print("Selecciona el numero: ");
-            num = scanner.nextInt();
+            do {
+                System.out.println("\nMenú de las películas");
+                System.out.println("1. Mostrar todas las películas");
+                System.out.println("2. Mostrar por nombre de la película");
+                System.out.println("3. Mostrar por nombre del director");
+                System.out.println("4. Mostrar por nombre del compositor");
+                System.out.println("5. Mostrar por nombre del fotógrafo");
+                System.out.println("6. Mostrar por nombre del actor principal");
+                System.out.println("7. Mostrar por nombre del actor secundario");
+                System.out.println("8. Insertar puntuación de una película");
+                System.out.println("9. Insertar película");
+                System.out.println("10. Eliminar película");
+                System.out.println("11. Exportar las películas a XML");
+                System.out.println("12. Enviar XML por correo");
+                System.out.println("13. Volver");
+                System.out.print("Selecciona el numero: ");
+                num = scanner.nextInt();
+            }while (num < 0 || num > 13);
+
         } catch (Exception e) {
             System.out.println("Dato erróneo");
         }
@@ -118,17 +126,20 @@ public class Main {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {
-            System.out.println("\nMenú de los actores");
-            System.out.println("1. Mostrar todos los actores");
-            System.out.println("2. Mostrar por nombre del actor");
-            System.out.println("3. Insertar actor");
-            System.out.println("4. Modificar actor");
-            System.out.println("5. Eliminar actor");
-            System.out.println("6. Actores a XML");
-            System.out.println("7. Volver");
-            System.out.print("Selecciona el numero: ");
-            num = scanner.nextInt();
-            scanner.nextLine();
+            do {
+                System.out.println("\nMenú de los actores");
+                System.out.println("1. Mostrar todos los actores");
+                System.out.println("2. Mostrar por nombre del actor");
+                System.out.println("3. Insertar actor");
+                System.out.println("4. Modificar actor");
+                System.out.println("5. Eliminar actor");
+                System.out.println("6. Actores a XML");
+                System.out.println("7. Volver");
+                System.out.print("Selecciona el numero: ");
+                num = scanner.nextInt();
+                scanner.nextLine();
+            }while (num < 0 || num > 7);
+
         } catch (Exception e) {
             System.out.println("Dato erróneo");
         }
@@ -149,17 +160,20 @@ public class Main {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {
-            System.out.println("\nMenú de los directores");
-            System.out.println("1. Mostrar todos los directores");
-            System.out.println("2. Mostrar por nombre del directores");
-            System.out.println("3. Insertar director");
-            System.out.println("4. Modificar director");
-            System.out.println("5. Eliminar director");
-            System.out.println("6. Directores a XML");
-            System.out.println("7. Volver");
-            System.out.print("Selecciona el numero: ");
-            num = scanner.nextInt();
-            scanner.nextLine();
+            do {
+                System.out.println("\nMenú de los directores");
+                System.out.println("1. Mostrar todos los directores");
+                System.out.println("2. Mostrar por nombre del directores");
+                System.out.println("3. Insertar director");
+                System.out.println("4. Modificar director");
+                System.out.println("5. Eliminar director");
+                System.out.println("6. Directores a XML");
+                System.out.println("7. Volver");
+                System.out.print("Selecciona el numero: ");
+                num = scanner.nextInt();
+                scanner.nextLine();
+            }while (num < 0 || num > 7);
+
         } catch (Exception e) {
             System.out.println("Dato erróneo");
         }
@@ -178,9 +192,9 @@ public class Main {
 
     public static void Fotografos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
+        int num = 0;
         try {
-            int num = 0;
-            try {
+            do {
                 System.out.println("\nMenú de los fotógrafos");
                 System.out.println("1. Mostrar todos los fotógrafos");
                 System.out.println("2. Mostrar por nombre del fotógrafos");
@@ -192,30 +206,21 @@ public class Main {
                 System.out.print("Selecciona el numero: ");
                 num = scanner.nextInt();
                 scanner.nextLine();
-            } catch (Exception e) {
-                System.out.println("Dato erróneo");
-            }
+            } while (num < 0 || num >7);
 
-            switch (num) {
-                case 1 -> funciones.Mostrar_Fotografos(null);
-                case 2 -> funciones.Mostrar_Fotografo_por_Nombre();
-                case 3 -> funciones.Insertar_Fotografo();
-                case 4 -> funciones.Modificar_Fotografos();
-                case 5 -> funciones.Eliminar_Fotografo();
-                case 6 -> funciones.Fotografos_XML();
-                case 7 -> Menu_Principal();
-                default -> System.out.println("Error");
-            }
-        } catch (IOException e) {
-            System.out.println("Error");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Error");
-        } catch (XMLDBException e) {
-            System.out.println("Error");
-        } catch (InstantiationException e) {
-            System.out.println("Error");
-        } catch (IllegalAccessException e) {
-            System.out.println("Error");
+        } catch (Exception e) {
+            System.out.println("Dato erróneo");
+        }
+
+        switch (num) {
+            case 1 -> funciones.Mostrar_Fotografos(null);
+            case 2 -> funciones.Mostrar_Fotografo_por_Nombre();
+            case 3 -> funciones.Insertar_Fotografo();
+            case 4 -> funciones.Modificar_Fotografos();
+            case 5 -> funciones.Eliminar_Fotografo();
+            case 6 -> funciones.Fotografos_XML();
+            case 7 -> Menu_Principal();
+            default -> System.out.println("Error");
         }
     }
 
@@ -223,17 +228,20 @@ public class Main {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
         try {
-            System.out.println("\nMenú de los compositores");
-            System.out.println("1. Mostrar todos los compositores");
-            System.out.println("2. Mostrar por nombre del compositores");
-            System.out.println("3. Insertar compositor");
-            System.out.println("4. Modificar compositor");
-            System.out.println("5. Eliminar compositor");
-            System.out.println("6. Compositores a XML");
-            System.out.println("7. Volver");
-            System.out.print("Selecciona el numero: ");
-            num = scanner.nextInt();
-            scanner.nextLine();
+            do {
+                System.out.println("\nMenú de los compositores");
+                System.out.println("1. Mostrar todos los compositores");
+                System.out.println("2. Mostrar por nombre del compositores");
+                System.out.println("3. Insertar compositor");
+                System.out.println("4. Modificar compositor");
+                System.out.println("5. Eliminar compositor");
+                System.out.println("6. Compositores a XML");
+                System.out.println("7. Volver");
+                System.out.print("Selecciona el numero: ");
+                num = scanner.nextInt();
+                scanner.nextLine();
+            }while (num < 0 || num > 7);
+
         } catch (Exception e) {
             System.out.println("Dato erróneo");
         }

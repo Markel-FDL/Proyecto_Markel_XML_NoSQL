@@ -2,18 +2,18 @@ package org.example;
 
 import java.io.Serializable;
 
-public class Actor implements Serializable{
+public class Actor implements Serializable {
 
     int id_actor;
     String nombre;
     String edad;
     //int participaciones;
 
-    public Actor(){
+    public Actor() {
 
     }
 
-    public Actor(int id_actor, String nombre, String edad){
+    public Actor(int id_actor, String nombre, String edad) {
         this.id_actor = id_actor;
         this.nombre = nombre;
         this.edad = edad;
@@ -43,7 +43,7 @@ public class Actor implements Serializable{
         this.edad = edad;
     }
 
-    public void Mostrar(){
+    public void Mostrar() {
         System.out.println("ID: " + id_actor +
                 " Nombre: " + nombre +
                 " Edad: " + edad);

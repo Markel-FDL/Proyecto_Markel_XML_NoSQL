@@ -7,6 +7,7 @@ import java.io.*;
 
 public class Creacion_fichero_Actor {
     Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
+
     public void creacion_fichero_actor() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         // ObjectOutputStream para poder escribir en el fichero binario de actores "Actores.dat". Si no existe, se crea automaticamente.
         ObjectOutputStream escribir = new ObjectOutputStream(new FileOutputStream("Actores.dat"));

@@ -1,4 +1,5 @@
 package org.example;
+
 import java.io.Serializable;
 
 public class Musico implements Serializable {
@@ -8,11 +9,11 @@ public class Musico implements Serializable {
     String edad;
     // int participaciones;
 
-    public Musico(){
+    public Musico() {
 
     }
 
-    public Musico(int id_musico, String nombre, String edad){
+    public Musico(int id_musico, String nombre, String edad) {
         this.id_musico = id_musico;
         this.nombre = nombre;
         this.edad = edad;
@@ -42,7 +43,7 @@ public class Musico implements Serializable {
         this.edad = edad;
     }
 
-    public void Mostrar(){
+    public void Mostrar() {
         System.out.println("ID: " + id_musico +
                 " Nombre: " + nombre +
                 " Edad: " + edad);
