@@ -232,6 +232,42 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // DIRECTORES
     // Mostrar todos los directores
 
+    public String Max_ID_Pelicula() throws XMLDBException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI = "xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu = "admin"; //Usuario
+        String usuPwd = "12345"; //Clave
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if (col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query("max(/Pelis/pelicula/@id)");
+
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+               return (String) r.getContent();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        return null;
+    }
+
 
     public boolean Comprobar_ID_Directores(int ID) throws XMLDBException {
         String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
@@ -1197,7 +1233,10 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         }
         assert col != null;
         col.close();
-        Main.Musicos();
+
+        if (Objects.equals(s, "")){
+            Main.Musicos();
+        }
     }
 
     // Mostrar músico por nombre
@@ -1549,7 +1588,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         }
         assert col != null;
         col.close();
-        Main.Actores();
+
+        if (Objects.equals(s, "")){
+            Main.Actores();
+        }
+
     }
 
     // Mostrar actor por nombre
@@ -2438,9 +2481,67 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     }
 
     public void Puntuacion_pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+        int campo = -10;
+
+        System.out.println("Puntuar una pelicula");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI = "xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu = "admin"; //Usuario
+        String usuPwd = "12345"; //Clave
+
+        Mostrar_Musicos("1");
+
+        try {
+            do {
+                System.out.println("ID de la pelicula: ");
+                ID = scanner.nextInt();
+                scanner.nextLine();
+                if (!Comprobar_ID_Actor(ID)) {
+                    System.out.println("Error al insertar ID o ya existe el ID insertado");
+                }
+            }while (ID < 0 || !Comprobar_ID_Actor(ID));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            do {
+                System.out.println("Puntuación: ");
+                campo = scanner.nextInt();
+                scanner.nextLine();
+                if (Objects.equals(campo, "")) {
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            } while (Objects.equals(campo, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if (col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query("update value /Pelis/pelicula[@id="+ ID +"]/puntuación\n" +
+                    "with "+ campo +"");
+
+            System.out.println("Modificación concluido");
 
 
-
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
         Main.Peliculas();
     }
 
@@ -2469,13 +2570,22 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         int ac_sec = -10;
         double puntuacion = 0.00;
 
+
+        String is = Max_ID_Pelicula();
+        int i = Integer.parseInt(is);
+        i += 1;
+
+
         System.out.println("Insertar pelicula");
         try {
-            System.out.print("Nombre de la pelicula: ");
-            nombre = scanner.nextLine();
-            if (Objects.equals(nombre, "")) {
+            do {
+                System.out.print("Nombre de la pelicula: ");
                 nombre = scanner.nextLine();
-            }
+                if (Objects.equals(nombre, "")) {
+                    System.out.println("No puedes dejar el campo vacio");
+                }
+            }while (Objects.equals(nombre, ""));
+
         } catch (Exception e) {
             System.out.println("Dato introducido erróneo");
         }
@@ -2483,27 +2593,51 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
         Mostrar_Directores("1");
         System.out.println("");
-        System.out.println("Inserta el ID del director de la pelicula a partir de las mostradas");
-        dire = scanner.nextInt();
-        if (Comprobar_ID_Directores(dire)){
-            System.out.println("Error al insertar ID o ya existe el ID insertado");
+        try {
+            do {
+                System.out.println("Inserta el ID del director de la pelicula a partir de las mostradas");
+                dire = scanner.nextInt();
+                scanner.nextLine();
+                if (!Comprobar_ID_Directores(dire)){
+                    System.out.println("Error al insertar ID o ya existe el ID insertado");
+                }
+            }while (dire < 0 || !Comprobar_ID_Directores(dire));
+
+        } catch (XMLDBException e) {
+            throw new RuntimeException(e);
         }
 
         Mostrar_Musicos("1");
 
         System.out.println("");
-        System.out.println("Inserta el ID del compositor de la pelicula a partir de las mostradas");
-        mu = scanner.nextInt();
-        if (Comprobar_ID_Musico(mu)){
-            System.out.println("Error al insertar ID o ya existe el ID insertado");
+        try {
+            do {
+                System.out.println("Inserta el ID del compositor de la pelicula a partir de las mostradas");
+                mu = scanner.nextInt();
+                scanner.nextLine();
+                if (!Comprobar_ID_Musico(mu)){
+                    System.out.println("Error al insertar ID o ya existe el ID insertado");
+                }
+            }while (mu < 0 || !Comprobar_ID_Musico(mu));
+
+        } catch (XMLDBException e) {
+            throw new RuntimeException(e);
         }
         Mostrar_Fotografos("1");
 
         System.out.println("");
-        System.out.println("Inserta el ID del fotógrafo de la película a partir de las mostradas");
-        fo = scanner.nextInt();
-        if (Comprobar_ID_Fotografos(fo)){
-            System.out.println("Error al insertar ID o ya existe el ID insertado");
+        try {
+            do {
+                System.out.println("Inserta el ID del fotógrafo de la película a partir de las mostradas");
+                fo = scanner.nextInt();
+                scanner.nextLine();
+                if (!Comprobar_ID_Fotografos(fo)){
+                    System.out.println("Error al insertar ID o ya existe el ID insertado");
+                }
+            }while (fo < 0 || !Comprobar_ID_Fotografos(fo));
+
+        } catch (XMLDBException e) {
+            throw new RuntimeException(e);
         }
 
         boolean dd = true;
@@ -2511,6 +2645,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             try {
                 System.out.print("Año de estreno de la pelicula: ");
                 ano = scanner.nextInt();
+                scanner.nextLine();
             } catch (Exception e) {
                 System.out.println("Dato introducido erróneo");
                 dd = false;
@@ -2522,6 +2657,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             try {
                 System.out.print("Duración (min) de la pelicula: ");
                 duracion = scanner.nextInt();
+                scanner.nextLine();
             } catch (Exception e) {
                 System.out.println("Dato introducido erróneo");
                 ee = false;
@@ -2531,17 +2667,33 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         Mostrar_Actores("1");
 
         System.out.println("");
-        System.out.println("Inserta el ID del actor principal de la película a partir de las mostradas");
-        ac_pri = scanner.nextInt();
-        if (Comprobar_ID_Actor(ac_pri)){
-            System.out.println("Error al insertar ID o ya existe el ID insertado");
+        try {
+            do {
+                System.out.println("Inserta el ID del actor principal de la película a partir de las mostradas");
+                ac_pri = scanner.nextInt();
+                scanner.nextLine();
+                if (!Comprobar_ID_Actor(ac_pri)){
+                    System.out.println("Error al insertar ID o ya existe el ID insertado");
+                }
+            }while (ac_pri < 0 || !Comprobar_ID_Actor(ac_pri));
+
+        } catch (XMLDBException e) {
+            throw new RuntimeException(e);
         }
 
         System.out.println("");
-        System.out.println("Inserta el ID del actor secundario de la película a partir de las mostradas");
-        ac_sec = scanner.nextInt();
-        if (Comprobar_ID_Directores(dire)){
-            System.out.println("Error al insertar ID o ya existe el ID insertado");
+        try {
+            do {
+                System.out.println("Inserta el ID del actor secundario de la película a partir de las mostradas");
+                ac_sec = scanner.nextInt();
+                scanner.nextLine();
+                if (!Comprobar_ID_Actor(ac_sec)){
+                    System.out.println("Error al insertar ID o ya existe el ID insertado");
+                }
+            }while (ac_sec < 0 || !Comprobar_ID_Actor(ac_sec));
+
+        } catch (XMLDBException e) {
+            throw new RuntimeException(e);
         }
 
         boolean zz = true;
@@ -2549,7 +2701,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             try {
                 System.out.print("Puntuación de la pelicula: ");
                 puntuacion = scanner.nextDouble();
-
+                scanner.nextLine();
+                scanner.nextLine();
+                if (puntuacion == 0.0){
+                    System.out.println("Introduce algo");
+                }
             } catch (Exception e) {
                 System.out.println("Dato introducido erróneo");
                 zz = false;
@@ -2565,38 +2721,16 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            // Modificar, está mal
-            ResourceSet result = servicio.query("for $emp in /Pelis/pelicula\n" +
-                    "let $id:= data($emp/@id)\n" +
-                    "let $titulo:= $emp/titulo_pelicula\n" +
-                    "let $id_director:= data($emp/director/@id)\n" +
-                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
-                    "let $id_compositor:= data($emp/compositor/@id)\n" +
-                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
-                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
-                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
-                    "let $ano:= $emp/año_estreno\n" +
-                    "let $duracion:= $emp/duracion\n" +
-                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
-                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
-                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
-                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
-                    "let $puntuacion:= $emp/puntuacion\n" +
-                    "where data($emp/fotografo/@id) = " + "" + "\n" +
-                    "return \n" +
-                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
-                    "\n");
 
-            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
-// recorrer los datos del recurso.
-            ResourceIterator i;
-            i = result.getIterator();
-            if (!i.hasMoreResources())
-                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
-            while (i.hasMoreResources()) {
-                Resource r = i.nextResource();
-                System.out.println((String) r.getContent());
-            }
+            ResourceSet result = servicio.query ("update insert \n" +
+                    "<Pelis><pelicula id= '"+ i +"'><titulo_pelicula>"+ nombre +"</titulo_pelicula><director id= '"+ dire +"'></director><compositor id= '"+ mu +"'></compositor>\n" +
+                    "<fotografo id= '"+ fo +"'></fotografo><año_estreno>"+ ano +"</año_estreno><duracion>"+ duracion +"</duracion><actor_principal id= '"+ ac_pri +"'></actor_principal>\n" +
+                    "<actor_secundario id= '"+ ac_sec +"'></actor_secundario><puntuacion>"+ puntuacion +"</puntuacion>\n" +
+                    "</pelicula></Pelis>\n" +
+                    "into /Pelis");
+
+
+            System.out.println("Película Insertada");
 
 
         } catch (Exception e) {
@@ -2606,6 +2740,86 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         assert col != null;
         col.close();
         Main.Peliculas();
+    }
+
+    public void Modificar_pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        int ID;
+        String campo = null;
+        String valor = null;
+
+        System.out.println("Modificar una pelicula");
+
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI = "xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu = "admin"; //Usuario
+        String usuPwd = "12345"; //Clave
+
+        Mostrar_Peliculas("1");
+
+        try {
+            do {
+                System.out.println("ID de la pelicula: ");
+                ID = scanner.nextInt();
+                scanner.nextLine();
+                if (!Comprobar_ID_Actor(ID)) {
+                    System.out.println("Error al insertar ID o ya existe el ID insertado");
+                }
+            }while (ID < 0 || !Comprobar_ID_Actor(ID));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            do {
+                System.out.println("Campo a modificar: ");
+                campo = scanner.nextLine();
+                if (Objects.equals(campo, "")) {
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            } while (Objects.equals(campo, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            do {
+                System.out.println("Valor a modificar: ");
+                valor = scanner.nextLine();
+                if (Objects.equals(valor, "")) {
+                    System.out.println("No puedes dejarlo en blanco");
+                }
+            } while (Objects.equals(valor, ""));
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if (col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query("update value /Pelis/pelicula[@id=" + ID + "]/" + campo + "\n" +
+                    "with '" + valor + "'");
+
+            System.out.println("Modificación concluido");
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+
+        Main.Directores();
+
+
     }
 
     // XML

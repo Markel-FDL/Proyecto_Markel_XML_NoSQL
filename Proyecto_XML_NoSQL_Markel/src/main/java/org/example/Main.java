@@ -92,13 +92,14 @@ public class Main {
                 System.out.println("7. Mostrar por nombre del actor secundario");
                 System.out.println("8. Insertar puntuación de una película");
                 System.out.println("9. Insertar película");
-                System.out.println("10. Eliminar película");
-                System.out.println("11. Exportar las películas a XML");
-                System.out.println("12. Enviar XML por correo");
-                System.out.println("13. Volver");
+                System.out.println("10. Modificar película");
+                System.out.println("11. Eliminar película");
+                System.out.println("12. Exportar las películas a XML");
+                System.out.println("13. Enviar XML por correo");
+                System.out.println("14. Volver");
                 System.out.print("Selecciona el numero: ");
                 num = scanner.nextInt();
-            }while (num < 0 || num > 13);
+            }while (num < 0 || num > 14);
 
         } catch (Exception e) {
             System.out.println("Dato erróneo");
@@ -114,10 +115,11 @@ public class Main {
             case 7 -> funciones.Mostrar_Pelicula_por_Actor_Secundario();
             case 8 -> funciones.Puntuacion_pelicula();
             case 9 -> funciones.Insertar_pelicula();
-            case 10 -> funciones.Eliminar_Pelicula();
-            case 11 -> funciones.Peliculas_XML();
-            case 12 -> funciones.Mail_Peliculas();
-            case 13 -> Menu_Principal();
+            case 10 -> funciones.Modificar_pelicula();
+            case 11 -> funciones.Eliminar_Pelicula();
+            case 12 -> funciones.Peliculas_XML();
+            case 13 -> funciones.Mail_Peliculas();
+            case 14 -> Menu_Principal();
             default -> System.out.println("Error");
         }
     }
