@@ -493,7 +493,12 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             ResourceSet result = servicio.query("for $em in /directores/director\n" +
-                    "return $em");
+                    "return\n" +
+                    "if (not(//$em/Nacionalidad/node()))\n" +
+                    "then\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "else\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -558,7 +563,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             ResourceSet result = servicio.query("for $enp in /directores/director\n" +
                     "where data($enp/@id) = " + ID + " \n" +
-                    "return $enp");
+                    "return if (not(//$em/Nacionalidad/node()))\n" +
+                    "then\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "else\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -578,6 +587,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         }
         assert col != null;
         col.close();
+
 
         Main.Directores();
     }
@@ -856,7 +866,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $em in /fotografos/fotografo return $em");
+            ResourceSet result = servicio.query("for $em in /fotografos/fotografo return if (not(//$em/Nacionalidad/node()))\n" +
+                    "then\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "else\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -877,7 +891,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         assert col != null;
         col.close();
 
-        if (s == ""){
+        if (s == null){
             Main.Fotografos();
         }
 
@@ -921,7 +935,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             ResourceSet result = servicio.query("for $enp in /fotografos/fotografo\n" +
                     "where data($enp/@id) = " + ID + " \n" +
-                    "return $enp");
+                    "return if (not(//$em/Nacionalidad/node()))\n" +
+                    "then\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "else\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1213,7 +1231,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $em in /compositores/compositor return $em");
+            ResourceSet result = servicio.query("for $em in /compositores/compositor return if (not(//$em/Nacionalidad/node()))\n" +
+                    "then\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "else\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1234,7 +1256,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         assert col != null;
         col.close();
 
-        if (Objects.equals(s, "")){
+        if (Objects.equals(s, null)){
             Main.Musicos();
         }
     }
@@ -1277,7 +1299,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             ResourceSet result = servicio.query("for $enp in /compositores/compositor\n" +
                     "where data($enp/@id) = " + ID + " \n" +
-                    "return $enp");
+                    "return if (not(//$em/Nacionalidad/node()))\n" +
+                    "then\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "else\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1568,7 +1594,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $em in /actores/actor return $em");
+            ResourceSet result = servicio.query("for $em in /actores/actor return if (not(//$em/Nacionalidad/node()))\n" +
+                    "then\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "else\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1589,7 +1619,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         assert col != null;
         col.close();
 
-        if (Objects.equals(s, "")){
+        if (Objects.equals(s, null)){
             Main.Actores();
         }
 
@@ -1633,7 +1663,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             ResourceSet result = servicio.query("for $enp in /actores/actor\n" +
                     "where data($enp/@id) = " + ID + " \n" +
-                    "return $enp");
+                    "return if (not(//$em/Nacionalidad/node()))\n" +
+                    "then\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "else\n" +
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1787,7 +1821,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         String usu = "admin"; //Usuario
         String usuPwd = "12345"; //Clave
 
-        Mostrar_Musicos("1");
+        Mostrar_Actores("1");
 
         try {
             do {
@@ -1849,7 +1883,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         assert col != null;
         col.close();
 
-        Main.Directores();
+        Main.Actores();
 
 
     }
@@ -1939,9 +1973,71 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
                     "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
                     "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
-                    "let $puntuacion:= $emp/puntuacion\n" +
+                    "let $puntuacion:= $emp/puntuación\n" +
                     "return \n" +
-                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n");
+                    "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)");
+
+            System.out.println("Se han obtenido " + result.getSize() + " elementos.");
+// recorrer los datos del recurso.
+            ResourceIterator i;
+            i = result.getIterator();
+            if (!i.hasMoreResources())
+                System.out.println(" LA CONSULTA NO DEVUELVE NADA O ESTÁ MAL ESCRITA");
+            while (i.hasMoreResources()) {
+                Resource r = i.nextResource();
+                System.out.println((String) r.getContent());
+            }
+
+
+        } catch (Exception e) {
+            System.out.println("Error al inicializar la BD eXist");
+            e.printStackTrace();
+        }
+        assert col != null;
+        col.close();
+        if (s == null) {
+            Main.Peliculas();
+        }
+    }
+
+    // Mostrar peliculas por orden de puntuacion
+
+    public void Mostrar_Peliculas_orden_puntuacion(String s) throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI = "xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto"; //URI colección
+        String usu = "admin"; //Usuario
+        String usuPwd = "12345"; //Clave
+
+        try {
+            Class cl = Class.forName(driver); //Cargar del driver
+            Database database = (Database) cl.newInstance(); //Instancia de la BD
+            DatabaseManager.registerDatabase(database); //Registro del driver
+
+            col = DatabaseManager.getCollection(URI, usu, usuPwd);
+            if (col == null)
+                System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
+            ResourceSet result = servicio.query("for $emp in /Pelis/pelicula\n" +
+                    "let $id:= data($emp/@id)\n" +
+                    "let $titulo:= $emp/titulo_pelicula\n" +
+                    "let $id_director:= data($emp/director/@id)\n" +
+                    "let $nombre_director:= (/directores/director[@id=$id_director]/nombre)\n" +
+                    "let $id_compositor:= data($emp/compositor/@id)\n" +
+                    "let $nombre_compositor:= (/compositores/compositor[@id=$id_compositor]/nombre)\n" +
+                    "let $id_fotografo:= data($emp/fotografo/@id)\n" +
+                    "let $nombre_fotografo:= (/fotografos/fotografo[@id=$id_fotografo]/nombre)\n" +
+                    "let $ano:= $emp/año_estreno\n" +
+                    "let $duracion:= $emp/duracion\n" +
+                    "let $actor_pri:= data($emp/actor_principal/@id)\n" +
+                    "let $nombre_actor_pri:= (/actores/actor[@id=$actor_pri]/nombre)\n" +
+                    "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
+                    "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
+                    "let $puntuacion:= $emp/puntuación\n" +
+                    "let $puntuacionn:= max($emp/puntuación)\n" +
+                    "order by($puntuacion) descending\n" +
+                    "return \n" +
+                    "concat('ID: ', $id\n, ' Titulo: ', $titulo\n, ' Nombre del director: ', data($nombre_director)\n, ' Nombre del compositor: ', data($nombre_compositor)\n, ' Nombre del fotografo: ', data($nombre_fotografo)\n, ' Año de estreno: ', $ano\n, ' Duracion: ', $duracion\n, ' Nombre del actor principal: ', data($nombre_actor_pri)\n, ' Nombre del actor secundario: ', data($nombre_actor_sec)\n, ' Puntuacion: ', $puntuacion)\n");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -2018,8 +2114,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $puntuacion:= $emp/puntuacion\n" +
                     "where data($emp/@id) = " + ID + "\n" +
                     "return \n" +
-                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
-                    "\n");
+                    "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -2096,8 +2191,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $puntuacion:= $emp/puntuacion\n" +
                     "where data($emp/director/@id) = " + ID + "\n" +
                     "return \n" +
-                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
-                    "\n");
+                    "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)" );
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -2174,8 +2268,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $puntuacion:= $emp/puntuacion\n" +
                     "where data($emp/compositores/@id) = " + ID + "\n" +
                     "return \n" +
-                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
-                    "\n");
+                    "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -2252,8 +2345,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $puntuacion:= $emp/puntuacion\n" +
                     "where data($emp/fotografo/@id) = " + ID + "\n" +
                     "return \n" +
-                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
-                    "\n");
+                    "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -2330,8 +2422,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $puntuacion:= $emp/puntuacion\n" +
                     "where data($emp/actor_principal/@id) = " + ID + "\n" +
                     "return \n" +
-                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
-                    "\n");
+                    "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -2406,8 +2497,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $puntuacion:= $emp/puntuacion\n" +
                     "where data($emp/actor_secundario/@id) = " + ID + "\n" +
                     "return \n" +
-                    "<resul><id_pelicula>{$id}</id_pelicula>{$titulo}<nombre_director>{data($nombre_director)}</nombre_director><nombre_compositor>{data($nombre_compositor)}</nombre_compositor><nombre_fotografo>{data($nombre_fotografo)}</nombre_fotografo>{$ano, $duracion}<actor_principal>{data($nombre_actor_pri)}</actor_principal><actor_secundario>{data($nombre_actor_sec)}</actor_secundario>{$puntuacion}</resul>\n" +
-                    "\n");
+                    "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -2482,7 +2572,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
     public void Puntuacion_pelicula() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         int ID;
-        int campo = -10;
+        double campo = -10;
 
         System.out.println("Puntuar una pelicula");
 
@@ -2492,7 +2582,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         String usu = "admin"; //Usuario
         String usuPwd = "12345"; //Clave
 
-        Mostrar_Musicos("1");
+        Mostrar_Peliculas("1");
 
         try {
             do {
@@ -2511,7 +2601,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         try {
             do {
                 System.out.println("Puntuación: ");
-                campo = scanner.nextInt();
+                campo = scanner.nextDouble();
                 scanner.nextLine();
                 if (Objects.equals(campo, "")) {
                     System.out.println("No puedes dejarlo en blanco");
