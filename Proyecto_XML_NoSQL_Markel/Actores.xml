@@ -1,1 +1,83 @@
-<?xml version="1.0" encoding="UTF-8"?><actores><actor id="1"><nombre>Cary Grant</nombre><edad>1904-1986</edad><Nacionalidad/></actor><actor id="2"><nombre>Alain Delon</nombre><edad>86</edad><Nacionalidad/></actor><actor id="3"><nombre>Alberto Sordi</nombre><edad>1920-2003</edad><Nacionalidad/></actor><actor id="4"><nombre>Alec Guinness</nombre><edad>1914-2000</edad><Nacionalidad/></actor><actor id="5"><nombre>Alfredo Landa</nombre><edad>1933-2013</edad><Nacionalidad/></actor><actor id="6"><nombre>Al Pacino</nombre><edad>82</edad><Nacionalidad/></actor><actor id="7"><nombre>Anthony Hopkins</nombre><edad>84</edad><Nacionalidad/></actor><actor id="8"><nombre>Bruno Ganz</nombre><edad>1941-2019</edad><Nacionalidad/></actor><actor id="9"><nombre>Burt Lancaster</nombre><edad>1913-1994</edad><Nacionalidad/></actor><actor id="10"><nombre>Buster Keaton</nombre><edad>1895-1966</edad><Nacionalidad/></actor><actor id="11"><nombre>Chang Chen</nombre><edad>46</edad><Nacionalidad/></actor><actor id="12"><nombre>Charles Chaplin</nombre><edad>1889-1977</edad><Nacionalidad/></actor><actor id="13"><nombre>Charles Laughton</nombre><edad>1899-1962</edad><Nacionalidad/></actor><actor id="14"><nombre>Choi Min-sik</nombre><edad>60</edad><Nacionalidad/></actor><actor id="15"><nombre>Christian Bale</nombre><edad>48</edad><Nacionalidad/></actor><actor id="16"><nombre>Christopher Lee</nombre><edad>1922-2015</edad><Nacionalidad/></actor></actores>
+<?xml version="1.0" encoding="UTF-8"?>
+<actores>
+    <actor id="1">
+        <nombre>Cary Grant</nombre>
+        <edad>1904-1986</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="2">
+        <nombre>Alain Delon</nombre>
+        <edad>86</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="3">
+        <nombre>Alberto Sordi</nombre>
+        <edad>1920-2003</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="4">
+        <nombre>Alec Guinness</nombre>
+        <edad>1914-2000</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="5">
+        <nombre>Alfredo Landa</nombre>
+        <edad>1933-2013</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="6">
+        <nombre>Al Pacino</nombre>
+        <edad>82</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="7">
+        <nombre>Anthony Hopkins</nombre>
+        <edad>84</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="8">
+        <nombre>Bruno Ganz</nombre>
+        <edad>1941-2019</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="9">
+        <nombre>Burt Lancaster</nombre>
+        <edad>1913-1994</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="10">
+        <nombre>Buster Keaton</nombre>
+        <edad>1895-1966</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="11">
+        <nombre>Chang Chen</nombre>
+        <edad>46</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="12">
+        <nombre>Charles Chaplin</nombre>
+        <edad>1889-1977</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="13">
+        <nombre>Charles Laughton</nombre>
+        <edad>1899-1962</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="14">
+        <nombre>Choi Min-sik</nombre>
+        <edad>60</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="15">
+        <nombre>Christian Bale</nombre>
+        <edad>48</edad>
+        <Nacionalidad/>
+    </actor>
+    <actor id="16">
+        <nombre>Christopher Lee</nombre>
+        <edad>1922-2015</edad>
+        <Nacionalidad/>
+    </actor>
+</actores>

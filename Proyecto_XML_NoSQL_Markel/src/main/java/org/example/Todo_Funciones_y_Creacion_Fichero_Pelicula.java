@@ -232,6 +232,8 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
     // DIRECTORES
     // Mostrar todos los directores
 
+
+
     public String Max_ID_Pelicula() throws XMLDBException {
         String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
         Collection col = null; // Colección
