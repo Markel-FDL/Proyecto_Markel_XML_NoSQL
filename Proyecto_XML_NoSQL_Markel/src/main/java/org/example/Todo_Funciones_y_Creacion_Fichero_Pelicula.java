@@ -40,6 +40,31 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
     }
 
+    public void Crear_coleccion() throws XMLDBException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+        String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
+        Collection col = null; // Colección
+        String URI = "xmldb:exist://localhost:8085/exist/xmlrpc/db"; //URI colección
+        String usu = "admin"; //Usuario
+        String usuPwd = "12345"; //Clave
+
+        Class cl = Class.forName(driver); //Cargar del driver
+        Database database = (Database) cl.newInstance(); //Instancia de la BD
+        DatabaseManager.registerDatabase(database); //Registro del driver
+        col = DatabaseManager.getCollection(URI, usu, usuPwd);
+
+        CollectionManagementService mgt = null;
+        try {
+            mgt = (CollectionManagementService) col.getService("CollectionManagementService", "1.0");
+            col = mgt.createCollection("xmldb:exist://localhost:8085/exist/xmlrpc/db/proyecto");
+            col.close();
+        } catch (XMLDBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+
     public void conectar_exist_db(String ss) throws XMLDBException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
         String driver = "org.exist.xmldb.DatabaseImpl"; //Driver para eXist
         Collection col = null; // Colección
@@ -496,11 +521,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             ResourceSet result = servicio.query("for $em in /directores/director\n" +
                     "return\n" +
-                    "if (not(//$em/Nacionalidad/node()))\n" +
+                    "if (not(//$em/nacionalidad/node()))\n" +
                     "then\n" +
                     "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
                     "else\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -563,13 +588,13 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $enp in /directores/director\n" +
-                    "where data($enp/@id) = " + ID + " \n" +
-                    "return if (not(//$em/Nacionalidad/node()))\n" +
+            ResourceSet result = servicio.query("for $em in /directores/director\n" +
+                    "where data($em/@id) = " + ID + " \n" +
+                    "return if (not(//$em/nacionalidad/node()))\n" +
                     "then\n" +
                     "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
                     "else\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -746,7 +771,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         try {
             do {
                 System.out.println("Campo a modificar: ");
-                campo = scanner.nextLine();
+                campo = scanner.nextLine().toLowerCase();
                 if (Objects.equals(campo, "")) {
                     System.out.println("No puedes dejarlo en blanco");
                 }
@@ -776,8 +801,12 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("update value /directores/director[@id=" + ID + "]/" + campo + "\n" +
-                    "with '" + valor + "'");
+            try {
+                ResourceSet result = servicio.query("update value /directores/director[@id=" + ID + "]/" + campo + "\n" +
+                        "with '" + valor + "'");
+            } catch (XMLDBException e) {
+                System.out.println("Error al insertar algún error");
+            }
 
             System.out.println("Modificación concluido");
 
@@ -868,11 +897,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $em in /fotografos/fotografo return if (not(//$em/Nacionalidad/node()))\n" +
+            ResourceSet result = servicio.query("for $em in /fotografos/fotografo return if (not(//$em/nacionalidad/node()))\n" +
                     "then\n" +
                     "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
                     "else\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -937,11 +966,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             ResourceSet result = servicio.query("for $enp in /fotografos/fotografo\n" +
                     "where data($enp/@id) = " + ID + " \n" +
-                    "return if (not(//$em/Nacionalidad/node()))\n" +
+                    "return if (not(//$enp/nacionalidad/node()))\n" +
                     "then\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "concat('ID: ', data($enp/@id), ' Nombre: ', data($enp/nombre), ' Edad: ', data($enp/edad), ' Nacionalidad: ', 'Vacia')\n" +
                     "else\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
+                    "concat('ID: ', data($enp/@id), ' Nombre: ', data($enp/nombre), ' Edad: ', data($enp/edad), ' Nacionalidad: ', data($enp/nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1116,7 +1145,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         try {
             do {
                 System.out.println("Campo a modificar: ");
-                campo = scanner.nextLine();
+                campo = scanner.nextLine().toLowerCase();
                 if (Objects.equals(campo, "")) {
                     System.out.println("No puedes dejarlo en blanco");
                 }
@@ -1146,8 +1175,12 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("update value /fotografos/fotografo[@id=" + ID + "]/" + campo + "\n" +
-                    "with '" + valor + "'");
+            try {
+                ResourceSet result = servicio.query("update value /fotografos/fotografo[@id=" + ID + "]/" + campo + "\n" +
+                        "with '" + valor + "'");
+            } catch (XMLDBException e) {
+                System.out.println("Error al insertar algún error");
+            }
 
             System.out.println("Modificación concluido");
 
@@ -1159,7 +1192,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         assert col != null;
         col.close();
 
-        Main.Directores();
+        Main.Fotografos();
 
 
     }
@@ -1233,11 +1266,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $em in /compositores/compositor return if (not(//$em/Nacionalidad/node()))\n" +
+            ResourceSet result = servicio.query("for $em in /compositores/compositor return if (not(//$em/nacionalidad/node()))\n" +
                     "then\n" +
                     "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
                     "else\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1299,13 +1332,13 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $enp in /compositores/compositor\n" +
-                    "where data($enp/@id) = " + ID + " \n" +
-                    "return if (not(//$em/Nacionalidad/node()))\n" +
+            ResourceSet result = servicio.query("for $em in /compositores/compositor\n" +
+                    "where data($em/@id) = " + ID + " \n" +
+                    "return if (not(//$em/nacionalidad/node()))\n" +
                     "then\n" +
                     "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
                     "else\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1478,7 +1511,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         try {
             do {
                 System.out.println("Campo a modificar: ");
-                campo = scanner.nextLine();
+                campo = scanner.nextLine().toLowerCase();
                 if (Objects.equals(campo, "")) {
                     System.out.println("No puedes dejarlo en blanco");
                 }
@@ -1508,8 +1541,12 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("update value /compositores/compositor[@id=" + ID + "]/" + campo + "\n" +
-                    "with '" + valor + "'");
+            try {
+                ResourceSet result = servicio.query("update value /compositores/compositor[@id=" + ID + "]/" + campo + "\n" +
+                        "with '" + valor + "'");
+            } catch (XMLDBException e) {
+                System.out.println("Error al insertar algún error");
+            }
 
             System.out.println("Modificación concluido");
 
@@ -1521,7 +1558,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         assert col != null;
         col.close();
 
-        Main.Directores();
+        Main.Musicos();
 
 
     }
@@ -1596,11 +1633,11 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $em in /actores/actor return if (not(//$em/Nacionalidad/node()))\n" +
+            ResourceSet result = servicio.query("for $em in /actores/actor return if (not(//$em/nacionalidad/node()))\n" +
                     "then\n" +
                     "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
                     "else\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
+                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1663,13 +1700,13 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("for $enp in /actores/actor\n" +
-                    "where data($enp/@id) = " + ID + " \n" +
-                    "return if (not(//$em/Nacionalidad/node()))\n" +
+            ResourceSet result = servicio.query("for $emp in /actores/actor\n" +
+                    "where data($emp/@id) = " + ID + " \n" +
+                    "return if (not(//$emp/nacionalidad/node()))\n" +
                     "then\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', 'Vacia')\n" +
+                    "concat('ID: ', data($emp/@id), ' Nombre: ', data($emp/nombre), ' Edad: ', data($emp/edad), ' Nacionalidad: ', 'Vacia')\n" +
                     "else\n" +
-                    "concat('ID: ', data($em/@id), ' Nombre: ', data($em/nombre), ' Edad: ', data($em/edad), ' Nacionalidad: ', data($em/Nacionalidad))");
+                    "concat('ID: ', data($emp/@id), ' Nombre: ', data($emp/nombre), ' Edad: ', data($emp/edad), ' Nacionalidad: ', data($emp/nacionalidad))");
 
             System.out.println("Se han obtenido " + result.getSize() + " elementos.");
 // recorrer los datos del recurso.
@@ -1842,7 +1879,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         try {
             do {
                 System.out.println("Campo a modificar: ");
-                campo = scanner.nextLine();
+                campo = scanner.nextLine().toLowerCase();
                 if (Objects.equals(campo, "")) {
                     System.out.println("No puedes dejarlo en blanco");
                 }
@@ -1872,8 +1909,12 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("update value /actores/actor[@id=" + ID + "]/" + campo + "\n" +
-                    "with '" + valor + "'");
+            try {
+                ResourceSet result = servicio.query("update value /actores/actor[@id=" + ID + "]/" + campo + "\n" +
+                        "with '" + valor + "'");
+            } catch (XMLDBException e) {
+                System.out.println("Error al insertar algún error");
+            }
 
             System.out.println("Modificación concluido");
 
@@ -2866,7 +2907,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         try {
             do {
                 System.out.println("Campo a modificar: ");
-                campo = scanner.nextLine();
+                campo = scanner.nextLine().toLowerCase();
                 if (Objects.equals(campo, "")) {
                     System.out.println("No puedes dejarlo en blanco");
                 }
@@ -2896,8 +2937,12 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("update value /Pelis/pelicula[@id=" + ID + "]/" + campo + "\n" +
-                    "with '" + valor + "'");
+            try {
+                ResourceSet result = servicio.query("update value /Pelis/pelicula[@id=" + ID + "]/" + campo + "\n" +
+                        "with '" + valor + "'");
+            } catch (XMLDBException e) {
+                System.out.println("Error al insertar algún error");
+            }
 
             System.out.println("Modificación concluido");
 
@@ -2909,7 +2954,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
         assert col != null;
         col.close();
 
-        Main.Directores();
+        Main.Peliculas();
 
 
     }
@@ -3028,7 +3073,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                 raiz.setAttribute("id", String.valueOf(actor.getId_actor()));
                 CrearElemento("nombre", actor.getNombre(), raiz, document);
                 CrearElemento("edad", actor.getEdad(), raiz, document);
-                CrearElemento("Nacionalidad", "", raiz, document);
+                CrearElemento("nacionalidad", "", raiz, document);
                 actor = (Actor) mostrar.readObject();
             }
         } catch (
@@ -3085,7 +3130,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                 raiz.setAttribute("id", String.valueOf(director.getId_director()));
                 CrearElemento("nombre", director.getNombre(), raiz, document);
                 CrearElemento("edad", director.getEdad(), raiz, document);
-                CrearElemento("Nacionalidad", "", raiz, document);
+                CrearElemento("nacionalidad", "", raiz, document);
                 director = (Director) mostrar.readObject();
             }
         } catch (
@@ -3142,7 +3187,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                 raiz.setAttribute("id", String.valueOf(fotografo.getId_fotografo()));
                 CrearElemento("nombre", fotografo.getNombre(), raiz, document);
                 CrearElemento("edad", fotografo.getEdad(), raiz, document);
-                CrearElemento("Nacionalidad", "", raiz, document);
+                CrearElemento("nacionalidad", "", raiz, document);
                 fotografo = (Fotografo) mostrar.readObject();
             }
         } catch (
@@ -3199,7 +3244,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                 raiz.setAttribute("id", String.valueOf(musico.getId_musico()));
                 CrearElemento("nombre", musico.getNombre(), raiz, document);
                 CrearElemento("edad", musico.getEdad(), raiz, document);
-                CrearElemento("Nacionalidad", "", raiz, document);
+                CrearElemento("nacionalidad", "", raiz, document);
                 musico = (Musico) mostrar.readObject();
             }
         } catch (

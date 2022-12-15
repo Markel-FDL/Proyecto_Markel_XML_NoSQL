@@ -26,6 +26,7 @@ public class Main {
             Creacion_fichero_Director director = new Creacion_fichero_Director();
             Creacion_fichero_Fotografo fotografo = new Creacion_fichero_Fotografo();
             Creacion_fichero_Musico musico = new Creacion_fichero_Musico();
+            funciones.Crear_coleccion();
             actor.creacion_fichero_actor();
             director.creacion_fichero_director();
             fotografo.creacion_fichero_fotografia();
@@ -85,7 +86,7 @@ public class Main {
 
                 System.out.println("\nMenú de las películas");
                 System.out.println("1. Mostrar todas las películas");
-                System.out.println("2. Mostrar todas las películas");
+                System.out.println("2. Mostrar todas las películas por orden de puntuación");
                 System.out.println("3. Mostrar por nombre de la película");
                 System.out.println("4. Mostrar por nombre del director");
                 System.out.println("5. Mostrar por nombre del compositor");
@@ -139,7 +140,7 @@ public class Main {
 
                 System.out.println("\nMenú de los actores");
                 System.out.println("1. Mostrar todos los actores");
-                System.out.println("2. Mostrar por nombre del actor");
+                System.out.println("2. Mostrar por id del actor");
                 System.out.println("3. Insertar actor");
                 System.out.println("4. Modificar actor");
                 System.out.println("5. Eliminar actor");
@@ -177,7 +178,7 @@ public class Main {
 
                 System.out.println("\nMenú de los directores");
                 System.out.println("1. Mostrar todos los directores");
-                System.out.println("2. Mostrar por nombre del directores");
+                System.out.println("2. Mostrar por id del director");
                 System.out.println("3. Insertar director");
                 System.out.println("4. Modificar director");
                 System.out.println("5. Eliminar director");
