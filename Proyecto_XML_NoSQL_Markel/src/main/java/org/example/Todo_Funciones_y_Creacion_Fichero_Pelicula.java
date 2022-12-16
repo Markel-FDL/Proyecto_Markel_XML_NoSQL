@@ -2310,7 +2310,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
                     "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
                     "let $puntuacion:= $emp/puntuacion\n" +
-                    "where data($emp/compositores/@id) = " + ID + "\n" +
+                    "where data($emp/compositor/@id) = " + ID + "\n" +
                     "return \n" +
                     "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)");
 
@@ -2464,7 +2464,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                     "let $actor_sec:= data($emp/actor_secundario/@id)\n" +
                     "let $nombre_actor_sec:= (/actores/actor[@id=$actor_sec]/nombre)\n" +
                     "let $puntuacion:= $emp/puntuacion\n" +
-                    "where data($emp/actor_principal/@id) = " + ID + "\n" +
+                    "where data($emp/actor_principal/@id) = " + ID + "\n)" +
                     "return \n" +
                     "concat('ID: ', $id, ' Titulo: ', $titulo, ' Nombre del director: ', data($nombre_director), ' Nombre del compositor: ', data($nombre_compositor), ' Nombre del fotografo: ', data($nombre_fotografo), ' Año de estreno: ', $ano, ' Duracion: ', $duracion, ' Nombre del actor principal: ', data($nombre_actor_pri), ' Nombre del actor secundario: ', data($nombre_actor_sec), ' Puntuacion: ', $puntuacion)");
 
@@ -2600,7 +2600,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
-            ResourceSet result = servicio.query("update delete /peliculas/pelicula[@id=" + ID + "]");
+            ResourceSet result = servicio.query("update delete /Pelis/pelicula[@id=" + ID + "]");
 
             System.out.println("Borrado concluido");
 
@@ -2653,6 +2653,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             } while (Objects.equals(campo, ""));
         } catch (Exception e) {
             System.out.println("Error");
+            scanner.nextLine();
         }
 
         try {

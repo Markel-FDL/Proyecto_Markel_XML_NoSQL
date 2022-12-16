@@ -87,12 +87,12 @@ public class Main {
                 System.out.println("\nMenú de las películas");
                 System.out.println("1. Mostrar todas las películas");
                 System.out.println("2. Mostrar todas las películas por orden de puntuación");
-                System.out.println("3. Mostrar por nombre de la película");
-                System.out.println("4. Mostrar por nombre del director");
-                System.out.println("5. Mostrar por nombre del compositor");
-                System.out.println("6. Mostrar por nombre del fotógrafo");
-                System.out.println("7. Mostrar por nombre del actor principal");
-                System.out.println("8. Mostrar por nombre del actor secundario");
+                System.out.println("3. Mostrar por id de la película");
+                System.out.println("4. Mostrar por id del director");
+                System.out.println("5. Mostrar por id del compositor");
+                System.out.println("6. Mostrar por id del fotógrafo");
+                System.out.println("7. Mostrar por id del actor principal");
+                System.out.println("8. Mostrar por id del actor secundario");
                 System.out.println("9. Insertar puntuación de una película");
                 System.out.println("10. Insertar película");
                 System.out.println("11. Modificar película");
@@ -209,7 +209,7 @@ public class Main {
             try {
                 System.out.println("\nMenú de los fotógrafos");
                 System.out.println("1. Mostrar todos los fotógrafos");
-                System.out.println("2. Mostrar por nombre del fotógrafos");
+                System.out.println("2. Mostrar por id del fotógrafos");
                 System.out.println("3. Insertar fotógrafo");
                 System.out.println("4. Modificar fotógrafo");
                 System.out.println("5. Eliminar fotógrafo");
@@ -244,7 +244,7 @@ public class Main {
             try {
                 System.out.println("\nMenú de los compositores");
                 System.out.println("1. Mostrar todos los compositores");
-                System.out.println("2. Mostrar por nombre del compositores");
+                System.out.println("2. Mostrar por id del compositores");
                 System.out.println("3. Insertar compositor");
                 System.out.println("4. Modificar compositor");
                 System.out.println("5. Eliminar compositor");
