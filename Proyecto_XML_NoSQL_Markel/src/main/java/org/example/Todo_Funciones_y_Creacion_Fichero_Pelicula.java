@@ -274,6 +274,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             col = DatabaseManager.getCollection(URI, usu, usuPwd);
             if (col == null)
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
+            assert col != null;
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             ResourceSet result = servicio.query("max(/Pelis/pelicula/@id)");
 
@@ -2906,7 +2907,7 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
 
         try {
             do {
-                System.out.println("Campo a modificar: ");
+                System.out.println("Campo a modificar (titulo_pelicula, director, compositor, fotografo, año_estreno, duracion, actor_principal, actor_secundario, puntuación): ");
                 campo = scanner.nextLine().toLowerCase();
                 if (Objects.equals(campo, "")) {
                     System.out.println("No puedes dejarlo en blanco");
@@ -2916,9 +2917,29 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
             System.out.println("Error");
         }
 
+        int u = 0;
+        switch (campo){
+            case "director": u = 1;
+                Mostrar_Directores("1");
+            break;
+            case "compositor": u = 2;
+                Mostrar_Musicos("1");
+            break;
+            case "fotografo": u = 3;
+                Mostrar_Fotografos("1");
+            break;
+            case "año_estreno", "duracion", "titulo_pelicula": u = 4;
+            break;
+            case "actor_principal": u = 5;
+                Mostrar_Actores("1");
+            break;
+            case "actor_secundario": u = 6;
+                Mostrar_Actores("1");
+        }
+
         try {
             do {
-                System.out.println("Valor a modificar: ");
+                System.out.println("Valor o ID a modificar: ");
                 valor = scanner.nextLine();
                 if (Objects.equals(valor, "")) {
                     System.out.println("No puedes dejarlo en blanco");
@@ -2938,8 +2959,24 @@ public class Todo_Funciones_y_Creacion_Fichero_Pelicula {
                 System.out.println(" *** LA COLECCION NO EXISTE. ***");
             XPathQueryService servicio = (XPathQueryService) col.getService("XPathQueryService", "1.0");
             try {
-                ResourceSet result = servicio.query("update value /Pelis/pelicula[@id=" + ID + "]/" + campo + "\n" +
-                        "with '" + valor + "'");
+                switch (u){
+                    case 1: ResourceSet result = servicio.query("update value /Pelis/pelicula[@id='" + ID + "']/director/@id with '" + valor + "'");
+                    break;
+                    case 2: ResourceSet result1 = servicio.query("update value /Pelis/pelicula[@id='" + ID + "']/compositor/@id with '" + valor + "'");
+                    break;
+                    case 3: ResourceSet result2 = servicio.query("update value /Pelis/pelicula[@id='" + ID + "']/fotografo/@id with '" + valor + "'");
+                    break;
+                    case 4: ResourceSet result3 = servicio.query("update value /Pelis/pelicula[@id=" + ID + "]/" + campo + "\n" +
+                            "with '" + valor + "'");
+                    break;
+                    case 5: ResourceSet result4 = servicio.query("update value /Pelis/pelicula[@id='" + ID + "']/actor_principal/@id with '" + valor + "'");
+                    break;
+                    case 6: ResourceSet result5 = servicio.query("update value /Pelis/pelicula[@id='" + ID + "']/actor_secundario/@id with '" + valor + "'");
+                    break;
+                    default:
+                        System.out.println("Error al insertar dato");
+                }
+
             } catch (XMLDBException e) {
                 System.out.println("Error al insertar algún error");
             }

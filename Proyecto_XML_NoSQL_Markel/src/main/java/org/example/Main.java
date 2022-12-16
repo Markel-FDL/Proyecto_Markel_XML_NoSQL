@@ -81,7 +81,7 @@ public class Main {
     public static void Peliculas() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
-        while (num != 15) {
+        while (num != 14) {
             try {
 
                 System.out.println("\nMenú de las películas");
@@ -97,9 +97,8 @@ public class Main {
                 System.out.println("10. Insertar película");
                 System.out.println("11. Modificar película");
                 System.out.println("12. Eliminar película");
-                System.out.println("13. Exportar las películas a XML");
-                System.out.println("14. Enviar XML por correo");
-                System.out.println("15. Volver");
+                System.out.println("13. Enviar XML por correo");
+                System.out.println("14. Volver");
                 System.out.print("Selecciona el numero: ");
                 num = scanner.nextInt();
                 scanner.nextLine();
@@ -121,9 +120,8 @@ public class Main {
                 case 10 -> funciones.Insertar_pelicula();
                 case 11 -> funciones.Modificar_pelicula();
                 case 12 -> funciones.Eliminar_Pelicula();
-                case 13 -> funciones.Peliculas_XML();
-                case 14 -> funciones.Mail_Peliculas();
-                case 15 -> Menu_Principal();
+                case 13 -> funciones.Mail_Peliculas();
+                case 14 -> Menu_Principal();
                 default -> {
                     System.out.println("Error");
                     scanner.nextLine();
@@ -135,7 +133,7 @@ public class Main {
     public static void Actores() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
-        while (num != 7) {
+        while (num != 6) {
             try {
 
                 System.out.println("\nMenú de los actores");
@@ -144,8 +142,7 @@ public class Main {
                 System.out.println("3. Insertar actor");
                 System.out.println("4. Modificar actor");
                 System.out.println("5. Eliminar actor");
-                System.out.println("6. Actores a XML");
-                System.out.println("7. Volver");
+                System.out.println("6. Volver");
                 System.out.print("Selecciona el numero: ");
                 num = scanner.nextInt();
                 scanner.nextLine();
@@ -160,8 +157,7 @@ public class Main {
                 case 3 -> funciones.Insertar_Actor();
                 case 4 -> funciones.Modificar_Actor();
                 case 5 -> funciones.Eliminar_Actores();
-                case 6 -> funciones.Actores_XML();
-                case 7 -> Menu_Principal();
+                case 6 -> Menu_Principal();
                 default -> {
                     System.out.println("Error");
                     scanner.nextLine();
@@ -182,8 +178,7 @@ public class Main {
                 System.out.println("3. Insertar director");
                 System.out.println("4. Modificar director");
                 System.out.println("5. Eliminar director");
-                System.out.println("6. Directores a XML");
-                System.out.println("7. Volver");
+                System.out.println("6. Volver");
                 System.out.print("Selecciona el numero: ");
                 num = scanner.nextInt();
                 scanner.nextLine();
@@ -198,8 +193,7 @@ public class Main {
                 case 3 -> funciones.Insertar_Directores();
                 case 4 -> funciones.Modificar_Directores();
                 case 5 -> funciones.Eliminar_Directores();
-                case 6 -> funciones.Directores_XML();
-                case 7 -> Menu_Principal();
+                case 6 -> Menu_Principal();
                 default -> {
                     System.out.println("Error");
                     scanner.nextLine();
@@ -211,7 +205,7 @@ public class Main {
     public static void Fotografos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
-        while (num != 7) {
+        while (num != 6) {
             try {
                 System.out.println("\nMenú de los fotógrafos");
                 System.out.println("1. Mostrar todos los fotógrafos");
@@ -219,8 +213,7 @@ public class Main {
                 System.out.println("3. Insertar fotógrafo");
                 System.out.println("4. Modificar fotógrafo");
                 System.out.println("5. Eliminar fotógrafo");
-                System.out.println("6. Fotógrafos a XML");
-                System.out.println("7. Volver");
+                System.out.println("6. Volver");
                 System.out.print("Selecciona el numero: ");
                 num = scanner.nextInt();
                 scanner.nextLine();
@@ -235,8 +228,7 @@ public class Main {
                 case 3 -> funciones.Insertar_Fotografo();
                 case 4 -> funciones.Modificar_Fotografos();
                 case 5 -> funciones.Eliminar_Fotografo();
-                case 6 -> funciones.Fotografos_XML();
-                case 7 -> Menu_Principal();
+                case 6 -> Menu_Principal();
                 default -> {
                     System.out.println("Error");
                     scanner.nextLine();
@@ -248,7 +240,7 @@ public class Main {
     public static void Musicos() throws IOException, ClassNotFoundException, XMLDBException, InstantiationException, IllegalAccessException {
         Todo_Funciones_y_Creacion_Fichero_Pelicula funciones = new Todo_Funciones_y_Creacion_Fichero_Pelicula();
         int num = 0;
-        while (num != 7) {
+        while (num != 6) {
             try {
                 System.out.println("\nMenú de los compositores");
                 System.out.println("1. Mostrar todos los compositores");
@@ -256,8 +248,7 @@ public class Main {
                 System.out.println("3. Insertar compositor");
                 System.out.println("4. Modificar compositor");
                 System.out.println("5. Eliminar compositor");
-                System.out.println("6. Compositores a XML");
-                System.out.println("7. Volver");
+                System.out.println("6. Volver");
                 System.out.print("Selecciona el numero: ");
                 num = scanner.nextInt();
                 scanner.nextLine();
@@ -272,8 +263,7 @@ public class Main {
                 case 3 -> funciones.Insertar_Musico();
                 case 4 -> funciones.Modificar_Musico();
                 case 5 -> funciones.Eliminar_Musicos();
-                case 6 -> funciones.Musicos_XML();
-                case 7 -> Menu_Principal();
+                case 6 -> Menu_Principal();
                 default -> {
                     System.out.println("Error");
                     scanner.nextLine();
